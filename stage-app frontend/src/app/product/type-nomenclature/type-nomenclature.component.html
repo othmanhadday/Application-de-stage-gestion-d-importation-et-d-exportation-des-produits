@@ -1,0 +1,160 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+
+<div class="card my-1 mx-0">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-2">
+        <button type="button"
+                *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'"
+                class="btn btn-info " data-toggle="modal" data-target="#myModalTypeNomenclature">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+<!--      <div class="col-md-8">-->
+<!--        <div class="form-group">-->
+<!--          <input type="text" class="form-control" placeholder="Search Article" ngModel-->
+<!--                 (ngModelChange)="searchType($event)">-->
+<!--        </div>-->
+<!--      </div>-->
+
+      <!-- Modal -->
+      <div class="modal  fade" id="myModalTypeNomenclature" role="dialog">
+        <div class="modal-dialog modal-lg">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title text-left">Ajouter un Type Piece de Rechange</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="categorieName">Nom Type Piece de Rechange</label>
+                <input type="text" class="form-control" [(ngModel)]="typeNomenclature.typeName"
+                       [ngClass]="{'shadow-none border-danger' : error.typeName}"
+                       id="categorieName" placeholder="Nom Type Piece de Rechange">
+                <div class="alert alert-danger pt-0 pb-0" *ngIf="error.typeName">
+                  <p class="text-danger mb-0">{{error.typeName}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" (click)="AddNewTypeNomenclature()" class="btn btn-primary">save</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row">
+  <!--table show all categorie-->
+  <div class="h-100 w-100 overflow-auto">
+    <div class="card position-relative">
+      <div class="card-header">Categorie list</div>
+      <div class="card-body ">
+        <table class="table">
+          <thead>
+          <tr>
+            <td>Id</td>
+            <td>Type Piece de rechange</td>
+            <td></td>
+          </tr>
+          </thead>
+          <tbody *ngIf="!typeNomenclatureSearch">
+          <tr *ngFor="let type of typeNomenclatures | paginate: { itemsPerPage: 8, currentPage: page }">
+            <td>{{type.id}}</td>
+            <td>{{type.typeName}}</td>
+            <td *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'">
+              <button class="btn btn-warning" (click)="editTypeNomenclature(type)">
+                <i class="fa fa-edit"></i>
+              </button>
+
+              <button class="btn btn-danger" (click)="confirmDeleteTypeNomenclature(type)">
+                <i class="fa fa-trash-o"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+          <tbody *ngIf="typeNomenclatureSearch">
+          <tr *ngFor="let type of typeNomenclatureSearch | paginate: { itemsPerPage: 8, currentPage: page }">
+            <td>{{type.id}}</td>
+            <td>{{type.typeName}}</td>
+            <td *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'">
+              <button class="btn btn-warning" (click)="editTypeNomenclature(type)">
+                <i class="fa fa-edit"></i>
+              </button>
+
+              <button class="btn btn-danger" (click)="confirmDeleteTypeNomenclature(type)">
+                <i class="fa fa-trash-o"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="has-text-centered">
+          <pagination-controls (pageChange)="page = $event"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--delete type de piece rechange confirmation model-->
+<div class="modal  fade" id="ModeleDeleteTypeNomenclature" data-keyboard="false" data-backdrop="static" tabindex="-1"
+     role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Delete Type de Piece de rechange {{typeNomenclature.typeName}}</h4>
+        <button type="button" class="close" (click)="closeModal()" data-dismiss="modal">&times;</button>
+
+      </div>
+      <div class="modal-body">
+        <h6> vous avez sûre supprimer Type de Piece de rechange id : {{typeNomenclature.id}}</h6>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="deleteNomenclature()">Delete</button>
+        <button type="button" class="btn btn-primary" (click)="closeModal()" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Edit type de piece rechange confirmation model-->
+<div class="modal  fade" id="ModeleEditTypeNomenclature" data-keyboard="false" data-backdrop="static" tabindex="-1"
+     role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Update Type de Piece de rechange {{typeNomenclature.typeName}}</h4>
+        <button type="button" class="close" (click)="closeModal()" data-dismiss="modal">&times;</button>
+
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <form #f="ngForm" (ngSubmit)="updateTypeNomenclature(f.value)">
+            <label for="categorieName">Nom Type Piece de Rechange</label>
+            <input type="text" name="typeName" class="form-control" ngModel value="{{typeNomenclature.typeName}}"
+                   [ngClass]="{'shadow-none border-danger' : error.typeName}" placeholder="Nom Type Piece de Rechange">
+            <div class="alert alert-danger pt-0 pb-0" *ngIf="error.typeName">
+              <p class="text-danger mb-0">{{error.typeName}}</p>
+            </div>
+            <div class="float-right ml-1">
+              <input type="submit" class="btn btn-primary" value="update"/>
+              <button type="button" class="btn btn-danger" (click)="closeModal()">Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

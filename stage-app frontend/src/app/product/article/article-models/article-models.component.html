@@ -1,0 +1,219 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+<div *ngIf="authService.user && authService.user.role">
+
+  <div class="card" *ngIf="article">
+    <div class="card-body">
+      <div class="row" *ngIf="article">
+        <div class="col-md-2">
+          <div class="row mx-2">
+            <h5>Ref Article : </h5>
+            <p> {{article.refArticle}}</p>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="row mx-2">
+            <h5>Nom Article : </h5>
+            <p> {{article.name}}</p>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="row mx-2" *ngIf="article.categorie">
+            <h5>Categorie : </h5>
+            <p> {{article.categorie.name}}</p>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="row mx-2">
+            <h5>Quantite Total : </h5>
+            <p> {{article.quantiteTotal}}</p>
+          </div>
+        </div>
+        <div class="col-md-2" *ngIf="authService.user && authService.user.role">
+          <td
+            *ngIf="!article?.activteArticleSerAchat1 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Achat niveau 1'">
+            <button class="btn btn-warning" (click)="SerAchatNiv1ActivateArtle(article)"><i class="fa fa-check-circle"
+                                                                                            style="color: #f15351"></i>
+            </button>
+          </td>
+
+          <td
+            *ngIf="article?.activteArticleSerAchat1 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Achat niveau 1'">
+            <i class="fa fa-check-circle" style="color: #1ef100"></i>
+          </td>
+
+          <td
+            *ngIf="!article.activteArticleSerAchat0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Achat niveau 0'">
+            <button class="btn btn-warning" (click)="SerAchatNiv0ActivateArtle(article)"><i class="fa fa-check-circle"
+                                                                                            style="color: #f15351"></i>
+            </button>
+          </td>
+          <td
+            *ngIf="article.activteArticleSerAchat0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Achat niveau 0'">
+            <i class="fa fa-check-circle" style="color: #1ef100"></i>
+          </td>
+
+          <td
+            *ngIf="!article.activteArticleSerTransitaire0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 0'">
+            <button class="btn btn-warning" (click)="SerTransitaireNiv0ActivateArtle(article)"><i
+              class="fa fa-check-circle" style="color: #f15351"></i></button>
+          </td>
+          <td
+            *ngIf="article.activteArticleSerTransitaire0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 0'">
+            <i class="fa fa-check-circle" style="color: #1ef100"></i>
+          </td>
+
+          <td
+            *ngIf="!article.activteArticleSerInfo1 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Informatique niveau 1'">
+            <button class="btn btn-warning" (click)="SerInformatiqueNiv1ActivateArtle(article)"><i
+              class="fa fa-check-circle" style="color: #f15351"></i></button>
+          </td>
+          <td
+            *ngIf="article.activteArticleSerInfo1 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Informatique niveau 1'">
+            <i class="fa fa-check-circle" style="color: #1ef100"></i>
+          </td>
+
+          <td
+            *ngIf="!article.activteArticleSerInfo0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Informatique niveau 0'">
+            <button class="btn btn-warning" (click)="SerInformatiqueNiv0ActivateArtle(article)"><i
+              class="fa fa-check-circle" style="color: #f15351"></i></button>
+          </td>
+          <td
+            *ngIf="article.activteArticleSerInfo0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Informatique niveau 0'">
+            <i class="fa fa-check-circle" style="color: #1ef100"></i>
+          </td>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="article.models?.length>0">
+    <div class="card-body">
+      <table class="table ">
+        <thead>
+        <tr>
+          <td>Id</td>
+          <td>Ref Machine</td>
+          <td>nom Machine</td>
+          <td>Quantite</td>
+          <td>Prix</td>
+          <td>image</td>
+        </tr>
+        </thead>
+        <tbody *ngFor="let model of article.models">
+        <tr [ngClass]="{'notActiveColor':modelValide(model)==true}" *ngIf="model">
+          <td>{{model.id}}</td>
+          <td>{{model.refMachine}}</td>
+          <td>{{model.nomMachine}}</td>
+          <td>{{model.quantiteTotal}}</td>
+          <td>{{model.prix}}</td>
+          <td>
+            <a href="{{authService.host+model.image}}" data-lightbox="image-1">
+              <img *ngIf="model.image" src="{{authService.host+model.image}}" class="img-thumbnail" height="70"
+                   width="70">
+            </a>
+          </td>
+
+          <div *ngIf="authService.user && authService.user.role">
+            <td
+              *ngIf="!model.activteArticleSerAchat1 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Achat niveau 1'">
+              <button class="btn btn-warning" (click)="SerAchatNiv1ActivateModel(model)"><i class="fa fa-check-circle"
+                                                                                            style="color: #f15351"></i>
+              </button>
+            </td>
+            <td
+              *ngIf="model.activteArticleSerAchat1 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Achat niveau 1'">
+              <i class="fa fa-check-circle" style="color: #1ef100"></i>
+            </td>
+
+            <td
+              *ngIf="!model.activteArticleSerAchat0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Achat niveau 0'">
+              <button class="btn btn-warning" (click)="SerAchatNiv0ActivateModel(model)"><i class="fa fa-check-circle"
+                                                                                            style="color: #f10001"></i>
+              </button>
+            </td>
+            <td
+              *ngIf="model.activteArticleSerAchat0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Achat niveau 0'">
+              <i class="fa fa-check-circle" style="color: #1ef100"></i>
+            </td>
+
+            <td
+              *ngIf="!model.activteArticleSerTransitaire0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 0'">
+              <button class="btn btn-warning" (click)="SerTransitaireNiv0ActivateModel(model)"><i
+                class="fa fa-check-circle"
+                style="color: #f10001"></i>
+              </button>
+            </td>
+            <td
+              *ngIf="model.activteArticleSerTransitaire0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 0'">
+              <i class="fa fa-check-circle" style="color: #1ef100"></i>
+            </td>
+
+            <td
+              *ngIf="!model.activteArticleSerInfo1 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Informatique niveau 1'">
+              <button class="btn btn-warning" (click)="SerInformatiqueNiv1ActivateModel(model)"><i
+                class="fa fa-check-circle" style="color: #f10001"></i></button>
+            </td>
+            <td
+              *ngIf="model.activteArticleSerInfo1 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Informatique niveau 1'">
+              <i class="fa fa-check-circle" style="color: #1ef100"></i>
+            </td>
+
+            <td
+              *ngIf="!model.activteArticleSerInfo0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Informatique niveau 0'">
+              <button class="btn btn-warning" (click)="SerInformatiqueNiv0ActivateModel(model)"><i
+                class="fa fa-check-circle" style="color: #f10001"></i></button>
+            </td>
+            <td
+              *ngIf="model.activteArticleSerInfo0 && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Informatique niveau 0'">
+              <i class="fa fa-check-circle" style="color: #1ef100"></i>
+            </td>
+          </div>
+
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="article.commentaires">
+    <div class="card-body">
+      <div class="text-center">
+        <button (click)="showMoreCommentaire()" class="btn col-md" *ngIf="showmore==false">
+          <i class="fa fa-arrow-up" style="font-size:24px;color:#f15351"></i>
+        </button>
+        <button (click)="showlessCommentaire()" class="btn col-md" *ngIf="showmore==true">
+          <i class="fa fa-arrow-down" style="font-size:24px;color:#f15351"></i>
+        </button>
+      </div>
+      <div class="list-group m-1"
+           *ngFor="let commentaire of article.commentaires | slice:nbrshowCommenteStart:nbrshowCommenteEnd">
+        <div>
+          <a class="list-group-item list-group-item-action flex-column align-items-start animate__animated fadeInDown"
+             [ngClass]="{'animate__animated animate__fadeInDown':showmore==false} && {'animate__animated animate__fadeInUp':showmore==true}">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1" *ngIf="commentaire.user">{{commentaire.user.fullName}}</h5>
+              <small>{{commentaire.createdAt | date:'short'}}</small>
+            </div>
+            <p class="mb-1">{{commentaire.commentaire}}</p>
+          </a>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md">
+          <div class="form-group">
+      <textarea class="form-control" placeholder="Ajouter un commentaire"
+                [(ngModel)]="commentaire.commentaire"></textarea>
+            <button class="btn btn-primary" (click)="newCommentaire()">commenter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+

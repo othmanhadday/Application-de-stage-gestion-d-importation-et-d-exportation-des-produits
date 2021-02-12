@@ -1,0 +1,138 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+<div class="card mx-0 my-1">
+  <div class="card-body">
+    <div class="row ">
+      <button type="button"
+              *ngIf="authService.roles.service.name+' '+authService.roles.niveau.name == 'Service Achat niveau 2'"
+              class="btn btn-info " data-toggle="modal" data-target="#myModalCategorie">
+        <i class="fa fa-plus"></i>
+      </button>
+      <!-- Modal -->
+      <div class="modal  fade" id="myModalCategorie" role="dialog">
+        <div class="modal-dialog modal-lg">
+
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title text-left">Ajouter Categorie</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="categorieName">Nom categorie</label>
+                <input type="text" class="form-control" [(ngModel)]="categorie.name"
+                       [ngClass]="{'shadow-none border-danger' : error.CatName}"
+                       id="categorieName" placeholder="Nom categorie">
+                <div class="alert alert-danger pt-0 pb-0" *ngIf="error.CatName">
+                  <p class="text-danger mb-0">{{error.CatName}}</p>
+                </div>
+              </div>
+              <button type="submit" (click)="AddNewCategorie()" class="btn btn-primary">save</button>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row">
+  <!--table show all categorie-->
+  <div class="h-100 w-100 overflow-auto">
+    <div class="card position-relative">
+      <div class="card-header">Categorie list</div>
+      <div class="card-body ">
+        <table class="table">
+          <thead>
+          <tr>
+            <td>Id</td>
+            <td>Categorie</td>
+            <td></td>
+            <td></td>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let cat of categories | paginate: { itemsPerPage: 8, currentPage: page }">
+            <td>{{cat.id}}</td>
+            <td>{{cat.name}}</td>
+            <td *ngIf="authService.roles.service.name+' '+authService.roles.niveau.name == 'Service Achat niveau 2'">
+              <button class="btn btn-warning" (click)="EditCategrie(cat)">
+                <i class="fa fa-edit"></i>
+              </button>
+            </td>
+            <td *ngIf="authService.roles.service.name+' '+authService.roles.niveau.name == 'Service Achat niveau 2'">
+              <button class="btn btn-danger" (click)="confirmationDeleteCategorie(cat)">
+                <i class="fa fa-trash-o"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="has-text-centered">
+          <pagination-controls (pageChange)="page = $event"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--delete categorie confirmation model-->
+<div class="modal  fade" id="ModeleDeleteCategorie" data-keyboard="false" data-backdrop="static" tabindex="-1"
+     role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Delete Categorie {{categorie.name}}</h4>
+        <button type="button" class="close" (click)="closeModelEdit()" data-dismiss="modal">&times;</button>
+
+      </div>
+      <div class="modal-body">
+        <h6> vous avez sûre supprimer Category id : {{categorie.id}}</h6>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="deleteCategorie()">Delete</button>
+        <button type="button" class="btn btn-primary" (click)="closeModelEdit()" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Edit categorie confirmation model-->
+<div class="modal  fade" id="ModeleEditCategorie" data-keyboard="false" data-backdrop="static" tabindex="-1"
+     role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Edit Categorie id {{categorie.id}}</h4>
+        <button type="button" class="close" (click)="closeModelEdit()" data-dismiss="modal">&times;</button>
+
+      </div>
+      <div class="modal-body">
+        <form #f="ngForm" (ngSubmit)="updateCategorie(f.value)">
+          <div class="form-group">
+            <label for="categorieNameEdt">Nom categorie</label>
+            <input type="text" class="form-control" value="{{categorie.name}}" ngModel name="name"
+                   [ngClass]="{'shadow-none border-danger' : error.CatName}"
+                   id="categorieNameEdt" placeholder="Nom categorie">
+            <div class="alert alert-danger pt-0 pb-0" *ngIf="error.CatName">
+              <p class="text-danger mb-0">{{error.CatName}}</p>
+            </div>
+
+            <button type="submit" class="btn btn-primary">update</button>
+            <button type="button" class="btn btn-danger" (click)="closeModelEdit()">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

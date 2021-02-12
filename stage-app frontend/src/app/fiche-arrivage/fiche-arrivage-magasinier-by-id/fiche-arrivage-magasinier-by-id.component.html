@@ -1,0 +1,496 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+<div *ngIf="authService.user && authService.user.role">
+  <!--  // inform other services to activate fiche arrivage-->
+  <div class="card" *ngIf="articleFicheArrivage && articleFicheArrivage.ficheArrivageMagasiniers[0]">
+    <div class="card-body">
+      <div class="row" *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Magasinier niveau 2' &&
+       articleFicheArrivage.ficheArrivageMagasiniers[0]">
+        <div class="col-md-6">
+          Service Magasinier Nveau 1 :
+          <div
+            *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0] && articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier1">
+            <i class="fa fa-check" style="color: #1ef100"></i>
+          </div>
+          <div
+            *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0] && !articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier1">
+            <button class="btn btn-warning" (click)="informSerMagasinier1()">
+              <i class="fa fa-exclamation-triangle"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          Service Magasinier Nveau 0 :
+          <div
+            *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0] && articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier0">
+            <i class="fa fa-check" style="color: #1ef100"></i>
+          </div>
+          <div
+            *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0] && !articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier0">
+            <button class="btn btn-warning" (click)="informSerMagasinier0()">
+              <i class="fa fa-exclamation-triangle"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow" style="border-radius: 0px"
+       *ngIf="articleFicheArrivage && authService.user && authService.user.role">
+    <div class="card-header" *ngIf="articleFicheArrivage.ficheArrivageAchat">Fiche Arrivage
+      : {{articleFicheArrivage.ficheArrivageAchat.id}}</div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4">
+          Conteneur : {{articleFicheArrivage.conteneur.numConteneur}}
+        </div>
+        <div class="col-md-4">
+          date Arrivée Conteneur : {{articleFicheArrivage.ficheArrivageMagasiniers[0].dateArriveDepot | date:'short'}}
+        </div>
+      </div>
+      <div class="row mt-4">
+        <table class="table">
+          <thead>
+          <tr>
+            <td>Id</td>
+            <td>Ref Machine</td>
+            <td>nom Machine</td>
+            <td>Quantite</td>
+            <td>image</td>
+            <td *ngIf="articleFicheArrivage.quantiteServMagasinier">Quantite Serviice Magasinier</td>
+            <!--          <td *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0].images.length>0">Images</td>-->
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>{{articleFicheArrivage.model.id}}</td>
+            <td>{{articleFicheArrivage.model.refMachine}}</td>
+            <td>{{articleFicheArrivage.model.nomMachine}}</td>
+            <td>{{articleFicheArrivage.model.quantiteTotal}}</td>
+            <td *ngIf="articleFicheArrivage.model.image">
+              <a href="{{authService.host+articleFicheArrivage.model.image}}" data-lightbox="image-1">
+                <img src="{{authService.host+articleFicheArrivage.model.image}}" class="img-thumbnail" height="70"
+                     width="70">
+              </a>
+            </td>
+            <td *ngIf="articleFicheArrivage.quantiteServMagasinier">{{articleFicheArrivage.quantiteServMagasinier}}</td>
+
+            <td>
+              <button class="btn btn-success"
+                      *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0].imagesInside.length > 0 &&
+                           articleFicheArrivage.ficheArrivageMagasiniers[0].imagesOutSide.length > 0"
+                      (click)="showAllImagesMagasinier(articleFicheArrivage.ficheArrivageMagasiniers[0])">
+                <i class="fa fa-image"></i>
+              </button>
+            </td>
+
+            <!--pour ajouter quantite et image Magasinier-->
+            <td *ngIf="!articleFicheArrivage.quantiteServMagasinier &&
+                     articleFicheArrivage.ficheArrivageMagasiniers[0].imagesInside.length<=0 &&
+                     articleFicheArrivage.ficheArrivageMagasiniers[0].imagesOutSide.length<=0">
+              <div
+                *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Magasinier niveau 2'">
+                <button class="btn btn-primary" (click)="showAddQteImages=true">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </td>
+
+            <!--pour edit quantite et image Magasinier et valide quantite et image Magasinier par Nv2-->
+            <td
+              *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Magasinier niveau 2' && quantiteMagaManuIsEqual() == true">
+              <button class="btn btn-primary" (click)="showUpdateCard()">
+                <i class="fa fa-edit"></i>
+              </button>
+            </td>
+
+            <td *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier2==true">
+              <div
+                *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Magasinier niveau 2'">
+                <i class="fa fa-check" style="color: #1ef100"></i>
+              </div>
+            </td>
+            <td *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier2==false">
+              <div
+                *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Magasinier niveau 2'">
+                <i class="fa fa-times" style="color: #f10001"></i>
+              </div>
+            </td>
+
+            <!--          pour valide quantite et image Magasinier par Nv1-->
+            <td
+              *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier2!=undefined &&
+                   articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier1==undefined">
+              <div
+                *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Magasinier niveau 1'">
+                <button class="btn btn-primary" (click)="valideQteMagasinierParMagaNv1()">
+                  <i class="fa fa-check"></i>
+                </button>
+              </div>
+            </td>
+            <td
+              *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier2 !=undefined &&
+                   articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier1">
+              <div
+                *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Magasinier niveau 1'">
+                <i class="fa fa-check" style="color: #1ef100"></i>
+              </div>
+            </td>
+
+            <!--          pour valide quantite et image Magasinier par Nv0-->
+            <td
+              *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier2!=undefined &&
+                   articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier0==undefined">
+              <div
+                *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Magasinier niveau 0'">
+                <button class="btn btn-primary" (click)="valideQteMagasinierParMagaNv0()">
+                  <i class="fa fa-check"></i>
+                </button>
+              </div>
+            </td>
+            <td
+              *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier2 !=undefined &&
+                   articleFicheArrivage.ficheArrivageMagasiniers[0].verifierMagasinier0">
+              <div
+                *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Magasinier niveau 0'">
+                <i class="fa fa-check" style="color: #1ef100"></i>
+              </div>
+            </td>
+
+            <td>
+              <button class="btn btn-primary" (click)="showNomenclaturesTable()">
+                <i class="fa fa-arrow-circle-down" *ngIf="showNomenclatures==false"></i>
+                <i class="fa fa-arrow-circle-up" *ngIf="showNomenclatures==true"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <table class="table" *ngIf="showNomenclatures==true">
+          <thead>
+          <tr>
+            <td>Id</td>
+            <td>Ref Interne</td>
+            <td>nom Fr|Ar|En</td>
+            <td>Designation</td>
+            <td>Code Short</td>
+            <td>Code Sage</td>
+            <td>Type</td>
+            <td>image</td>
+          </tr>
+          </thead>
+          <tbody *ngIf="articleFicheArrivage.model.nomenclatures">
+          <tr *ngFor="let piece of articleFicheArrivage.model.nomenclatures">
+            <td>{{piece.id}}</td>
+            <td>{{piece.refIntern}}</td>
+            <td>
+              {{piece.nomFr}} |
+              {{piece.nomAr}} |
+              {{piece.nomEn}}
+            </td>
+            <td>{{piece.designation}}</td>
+            <td>{{piece.codeShort}}</td>
+            <td>{{piece.codeSage}}</td>
+            <td *ngIf="piece.typeNomenclature">{{piece.typeNomenclature.typeName}}</td>
+            <td>
+              <a href="{{authService.host+piece.image}}" data-lightbox="image-1">
+                <img src="{{authService.host+piece.image}}" class="img-thumbnail" height="70"
+                     width="70">
+              </a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!--add quantite and images-->
+  <div class="card shadow mt-4" style="border-radius: 0px"
+       *ngIf="articleFicheArrivage && showAddQteImages==true">
+    <div class="card-header">Add Quantite Par Service Magasinier</div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="qteMaga">Quantite</label>
+            <input class="form-control" placeholder="Quantite : "
+                   [(ngModel)]="articleFicheArrivage.quantiteServMagasinier"
+                   id="qteMaga">
+          </div>
+          <div class="alert alert-danger" *ngIf="error.quantite">
+            {{error.quantite}}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="imageOutsde">Sélectionner image extérieur conteneur ( Moins de 300 Ko)</label>
+            <input type="file" accept='image/*' class="form-control-file" id="imageOutsde"
+                   (change)="onAddImagesToFicheArticleMagasinierOutSide($event, articleFicheArrivage)" multiple>
+          </div>
+          <div class="col">
+            <img *ngFor="let url of articleFicheArrivage.urlOutside" [src]="url" class="img-thumbnail"
+                 height="70"
+                 width="70">
+          </div>
+          <div class="alert alert-danger" *ngIf="error.imageOutSide">
+            {{error.imageOutSide}}
+          </div>
+        </div>
+
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="imageinsde">Sélectionner image intérieur conteneur ( Moins de 300 Ko)</label>
+            <input type="file" accept='image/*' class="form-control-file" id="imageinsde"
+                   (change)="onAddImagesToFicheArticleMagasinierInside($event, articleFicheArrivage)" multiple>
+          </div>
+          <div class="col">
+            <img *ngFor="let url of articleFicheArrivage.urlInside" [src]="url" class="img-thumbnail"
+                 height="70"
+                 width="70">
+          </div>
+          <div class="alert alert-danger" *ngIf="error.imageInside">
+            {{error.imageInside}}
+          </div>
+        </div>
+
+      </div>
+
+      <button (click)="uploadQteImageMagasinier()" class="btn btn-primary">
+        save
+      </button>
+    </div>
+  </div>
+
+  <!--update quantite and images-->
+  <div class="card shadow mt-4" style="border-radius: 0px"
+       *ngIf="articleFicheArrivage && showupdateQteImages==true">
+    <div class="card-header">upadte Quantite Par Service Magasinier</div>
+    <div class="card-body">
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="qteMagaEdit">Quantite</label>
+            <input class="form-control" placeholder="Quantite : "
+                   [(ngModel)]="articleFicheArrivage.quantiteServMagasinier"
+                   id="qteMagaEdit">
+          </div>
+          <div class="alert alert-danger" *ngIf="error.quantite">
+            {{error.quantite}}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="imageOutsdeedit">Sélectionner image extérieur conteneur ( Moins de 300 Ko)</label>
+            <input type="file" accept='image/*' class="form-control-file" id="imageOutsdeedit"
+                   (change)="onUpdateImagesToFicheArticleMagasinierOutside($event, articleFicheArrivage)" multiple>
+          </div>
+          <div class="col">
+            <img *ngFor="let url of articleFicheArrivage.urlOutside" [src]="url" class="img-thumbnail"
+                 height="70"
+                 width="70">
+          </div>
+          <div class="alert alert-danger" *ngIf="error.imageOutSide">
+            {{error.imageOutSide}}
+          </div>
+        </div>
+
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="imageinsdeedit">Sélectionner image intérieur conteneur ( Moins de 300 Ko)</label>
+            <input type="file" accept='image/*' class="form-control-file" id="imageinsdeedit"
+                   (change)="onUpdateImagesToFicheArticleMagasinierInside($event, articleFicheArrivage)" multiple>
+          </div>
+          <div class="col">
+            <img *ngFor="let url of articleFicheArrivage.urlInside" [src]="url" class="img-thumbnail"
+                 height="70"
+                 width="70">
+          </div>
+          <div class="alert alert-danger" *ngIf="error.imageInside">
+            {{error.imageInside}}
+          </div>
+        </div>
+
+      </div>
+
+      <button (click)="updateQteImageMagasinier()" class="btn btn-primary">
+        update
+      </button>
+      <button (click)="showupdateQteImages =false" class="btn btn-danger ">
+        close
+      </button>
+    </div>
+  </div>
+
+
+  <!--show images to fiche Arrivage Magasiner modal-->
+  <div class="modal fade" id="showImageMagasinier" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+      <!-- Modal content-->
+      <div class="modal-content" *ngIf="articleFicheArrivage">
+        <div class="modal-body">
+          <div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+          <h5>images extérieur conteneur </h5>
+          <div class="row">
+            <a [href]="authService.host+img.name"
+               *ngFor="let img of articleFicheArrivage.ficheArrivageMagasiniers[0].imagesOutSide"
+               data-lightbox="image-1">
+              <img *ngIf="img.name" [src]="authService.host+img.name" class="img-thumbnail"
+                   height="150"
+                   width="150">
+            </a>
+          </div>
+
+          <h5>images intérieur conteneur </h5>
+          <div class="row">
+            <a [href]="authService.host+img.name"
+               *ngFor="let img of articleFicheArrivage.ficheArrivageMagasiniers[0].imagesInside"
+               data-lightbox="image-1">
+              <img *ngIf="img.name" [src]="authService.host+img.name" class="img-thumbnail"
+                   height="150"
+                   width="150">
+            </a>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn bg-danger" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- card add Manutention to fiche arrivage conteneurs-->
+  <div class="col-md-6">
+    <div class="card shadow mt-4" style="border-radius: 0px"
+         *ngIf="articleFicheArrivage">
+      <div class="card-header">Add Manutentionnaire
+
+        <div class="float-right"
+             *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Magasinier niveau 2'">
+          <button class="btn btn-primary" (click)="showModalAddManu()">
+            <i class="fa fa-plus"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body"
+           *ngIf="articleFicheArrivage.ficheArrivageMagasiniers[0].ficheArrivageMagasinierManutentionnaires">
+        <div class="row">
+          <table class="table">
+            <thead>
+            <td>Id</td>
+            <td>Nom</td>
+            <td>Quantite</td>
+            </thead>
+            <tbody>
+            <tr
+              *ngFor="let manu of articleFicheArrivage.ficheArrivageMagasiniers[0].ficheArrivageMagasinierManutentionnaires">
+              <td>{{manu.user.id}}</td>
+              <td>{{manu.user.fullName}}</td>
+              <td *ngIf="manu.quantiteManutentionnaire">{{manu.quantiteManutentionnaire}}</td>
+              <td *ngIf="manu.quantiteManutentionnaire==null">- -</td>
+              <td
+                *ngIf="authService.user.id==manu.user.id && articleFicheArrivage.quantiteServMagasinier && !manu.quantiteManutentionnaire">
+                <input type="number" class="form-control" [(ngModel)]="quantiteManutentionnaire"
+                       placeholder="Quantite"/>
+                <button class="btn btn-success" (click)="addQteManu(manu)">
+                  save
+                </button>
+              </td>
+              <div
+                *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Magasinier niveau 2'">
+                <td *ngIf="manu.verifierMagasinier2==true">
+                  <i class="fa fa-check"></i>
+                </td>
+                <td *ngIf="manu.verifierMagasinier2==false">
+                  <i class="fa fa-times"></i>
+                </td>
+
+                <td
+                  *ngIf="articleFicheArrivage.quantiteServMagasinier != manu.quantiteManutentionnaire && manu.quantiteManutentionnaire && manu.verifierMagasinier2==null">
+                  <button class="btn btn-primary" (click)="valideQteMagasinierParManutentionnaire(manu)">
+                    <i class="fa fa-check"></i>
+                  </button>
+                  <button class="btn btn-danger" (click)="notValideQteMagasinierParManutentionnaire(manu)">
+                    <i class="fa fa-times"></i>
+                  </button>
+                </td>
+
+              </div>
+
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!--Modal add Manutention to fiche arrivage conteneurs-->
+  <div class="modal fade" id="addManuToFicheArrMagasinier" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body" *ngIf="manutentionnaires">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <input [(ngModel)]="searchManu" class="form-control" placeholder="Search Manutentonnaire"
+                       (ngModelChange)="searchManutentionnaire()"/>
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="manutentionnaireFiltred==null">
+            <div class="col-md-4" *ngFor="let manu of manutentionnaires">
+              <div class="card">
+                <img class="card-img-top" src="{{authService.host + manu.imageUser}}" width="150" height="150">
+                <div class="card-body">
+                  <h5 class="card-title">{{manu.fullName}}</h5>
+                  <p class="card-text">{{manu.role.service.name}} {{manu.role.niveau.name}}</p>
+
+                  <button class="btn btn-success" *ngIf="manuIsActivate(manu)!=true"
+                          (click)="addManuToFicheArrMaga(manu)">
+                    <i class="fa fa-check"></i>
+                  </button>
+
+                  <div *ngIf="manuIsActivate(manu)==true">
+                    <i class="fa fa-check"></i>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="manutentionnaireFiltred!=null">
+            <div class="col-md-4" *ngFor="let manu of manutentionnaireFiltred">
+              <div class="card">
+                <img class="card-img-top" src="{{authService.host + manu.imageUser}}" width="150" height="150">
+                <div class="card-body">
+                  <h5 class="card-title">{{manu.fullName}}</h5>
+                  <p class="card-text">{{manu.role.service.name}} {{manu.role.niveau.name}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,120 @@
+<div class="wrapper">
+  <!-- Sidebar  -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <h3
+        *ngIf="authService.user && authService.user.role">{{authService.user.role.service.name + ' ' + authService.user.role.niveau.name}}</h3>
+      <strong></strong>
+    </div>
+
+
+    <ul class="list-unstyled components" *ngIf="authService.user && authService.user.role">
+      <li>
+        <a routerLink="/">
+          <i class="fa fa-home"></i>
+          Home
+        </a>
+      </li>
+
+      <li>
+        <a href="#fiche-arrivage" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+          <i class="fa fa-briefcase"></i>
+          Fiche
+          Arrivage
+        </a>
+        <ul class="collapse list-unstyled" id="fiche-arrivage">
+          <li>
+            <a routerLink="show-fiches-arrivages">Show All</a>
+          </li>
+          <li
+            *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Achat niveau 2'">
+            <a routerLink="add-fiche-arrivage">Add New</a>
+          </li>
+        </ul>
+
+
+        <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+          <i class="fa fa-product-hunt"></i>
+          Articles
+        </a>
+        <ul class="collapse list-unstyled" id="pageSubmenu">
+          <li>
+            <a routerLink="articles">Produit</a>
+          </li>
+          <li>
+            <a routerLink="categorie">Categorie</a>
+          </li>
+          <li>
+            <a routerLink="models">Models</a>
+          </li>
+          <li>
+            <a routerLink="nomenclature">Pièce de rechange</a>
+          </li>
+          <li>
+            <a routerLink="typeNomenclature">Type Pièce de rechange</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a routerLink="my-compte">
+          <i class="fa fa-user-circle"></i>
+          Mon Compte
+        </a>
+      </li>
+      <li *ngIf="authService.user.role.service.name == 'Service Ressource humaine'">
+        <a routerLink="add-compte">
+          <i class="fa fa-user-plus"></i>
+          Employees
+        </a>
+      </li>
+      <li>
+        <a>
+          <i class="fa fa-paper-plane"></i>
+          Contact
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Page Content  -->
+  <div id="content" style="background-color: #0062cc0d">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+
+        <button type="button" id="sidebarCollapse" (click)="toggleSideBar()" class="btn btn-info">
+          <i class="fa fa-align-left"></i>
+        </button>
+        <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+          <i class="fa fa-align-justify"></i>
+        </button>
+
+        <app-navbar></app-navbar>
+
+      </div>
+    </nav>
+
+    <div class="container text-center" *ngFor="let alert of alerts">
+      <div *ngIf="alert.ficheArrivageAchat">
+        <div *ngIf="!alert.ficheArrivageAchat.activteArticleSerAchat1 || alert.ficheArrivageAchat.activteArticleSerAchat0!=true ||
+                    !alert.ficheArrivageAchat.activteArticleSerTransitaire0 || !alert.ficheArrivageAchat.activteArticleSerInfo1 ||
+                    !alert.ficheArrivageAchat.activteArticleSerInfo0 || !alert.ficheArrivageAchat.ficheArrivageTransitaires[0].activteArticleSerAchat2 ||
+                    !alert.ficheArrivageAchat.ficheArrivageTransitaires[0].activteArticleSerAchat1 || !alert.ficheArrivageAchat.ficheArrivageTransitaires[0].activteArticleSerAchat0 ||
+                    !alert.ficheArrivageAchat.ficheArrivageMagasiniers[0].verifierMagasinier1 || !alert.ficheArrivageAchat.ficheArrivageMagasiniers[0].verifierMagasinier0">
+          <div class="alert alert-danger"
+               *ngIf="alert.showIn == authService.user.role.service.name +' '+ authService.user.role.niveau.name">
+            {{alert.name}}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <router-outlet></router-outlet>
+
+
+  </div>
+</div>

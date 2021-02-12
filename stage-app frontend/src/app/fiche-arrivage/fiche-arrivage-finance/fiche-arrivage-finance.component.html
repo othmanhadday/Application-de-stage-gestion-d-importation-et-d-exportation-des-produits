@@ -1,0 +1,246 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+<button class="btn btn-primary" (click)="print()">export pdf</button>
+
+<div *ngIf="authService.user && authService.user.role" id="content" #content>
+
+  <div class="card p-0" *ngIf="ficheArrivage">
+    <div class="card-body p-0">
+      <h4 class="text-center font-weight-bold">Arrivage : {{ficheArrivage.id}}
+        <span *ngIf="ficheArrivage.depot && ficheArrivage.depot.name">à {{ficheArrivage.depot.name}}</span>
+      </h4>
+    </div>
+  </div>
+
+  <div class="card p-0" *ngIf="ficheArrivage">
+    <div class="card-body p-0">
+      <p class="text-center " *ngIf="ficheArrivage.articleFicheArrivageAchats[0]">
+      <span *ngIf="!ficheArrivage.articleFicheArrivageAchats[0].ficheArrivageMagasiniers[0]">
+        Date de Creation Arrivage:
+        {{ficheArrivage.createdAt |date: 'dd/MM/yyyy'}}
+      </span>
+
+        <span *ngIf="ficheArrivage.articleFicheArrivageAchats[0].ficheArrivageMagasiniers[0] &&
+                   ficheArrivage.articleFicheArrivageAchats[0].ficheArrivageMagasiniers[0].dateArriveDepot">
+        Date d'arrivée prévu au port :
+          {{ficheArrivage.articleFicheArrivageAchats[0].ficheArrivageMagasiniers[0].dateArriveDepot |date: 'dd/MM/yyyy'}}
+      </span>
+      </p>
+    </div>
+  </div>
+
+  <table class="table table-bordered bg-white" *ngIf="ficheArrivage">
+    <thead>
+    <td class="bg-danger">{{nbrHq}}</td>
+    <td>Reference Machine</td>
+    <td>Numero de conteneurs</td>
+    <td>Quantite transitaire</td>
+    <td>Quantite Prévu</td>
+    <td>Quantite Reçu</td>
+    <td>Inventaire Pysique</td>
+    <td>risque d'ecart</td>
+    </thead>
+    <tbody>
+    <tr *ngFor="let artFiche of ficheArrivage.articleFicheArrivageAchats; let i = index">
+      <td>{{i + 1}}</td>
+      <td>{{artFiche.model.refMachine}}</td>
+      <td>{{artFiche.conteneur.numConteneur}}</td>
+      <td *ngIf="artFiche.quantiteServTransitaire">{{artFiche.quantiteServTransitaire}}</td>
+      <td *ngIf="!artFiche.quantiteServTransitaire" style=" color: #f10001">en attend</td>
+      <td>{{artFiche.quantiteServAchat}}</td>
+      <td *ngIf="artFiche.quantiteServMagasinier">{{artFiche.quantiteServMagasinier}}</td>
+      <td *ngIf="!artFiche.quantiteServMagasinier" style=" color: #f10001">en attend</td>
+
+      <!--    inventaire physique complet-->
+      <td
+        *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].inventairePhysique==true">
+        complet
+      </td>
+
+      <td
+        *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].inventairePhysique==false">
+        no complet
+      </td>
+      <td *ngIf="artFiche.quantiteServAchat == artFiche.quantiteServTransitaire && artFiche.quantiteServTransitaire == artFiche.quantiteServMagasinier &&
+                artFiche.quantiteServAchat == artFiche.quantiteServMagasinier">
+        No risque d'ecart
+      </td>
+
+      <div *ngIf="artFiche.quantiteServAchat != artFiche.quantiteServTransitaire || artFiche.quantiteServTransitaire != artFiche.quantiteServMagasinier ||
+                artFiche.quantiteServAchat != artFiche.quantiteServMagasinier">
+        <div
+          *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].inventairePhysique==true">
+          <td *ngIf="artFiche.ficheArrivageFinances[0] && artFiche.ficheArrivageFinances[0].cleDouan == true">
+            <div *ngIf="!artFiche.ficheArrivageFinances[0].verifierTemps">
+              <ul>
+                <li>
+                  date sortie le conteneur de port
+                  :  {{artFiche.ficheArrivageTransitaires[0].dateSortiePort |date: 'dd/MM/yyyy HH:mm'}} </li>
+                <li>
+                  date d'arrivée le conteneur au depot
+                  :  {{artFiche.ficheArrivageMagasiniers[0].dateArriveDepot |date: 'dd/MM/yyyy HH:mm'}} </li>
+                <li>temps entre les deux date : {{between2Time(artFiche)}}</li>
+              </ul>
+              <button class="btn btn-primary"
+                      *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Finance niveau 2'"
+                      (click)="tempSup3h(artFiche)">
+                <i class="fa fa-check"></i>
+              </button>
+            </div>
+
+            <div style="color: #f10001;" *ngIf="artFiche.ficheArrivageFinances[0].verifierTemps==true">
+              risque d'ecart service Transitaire
+            </div>
+          </td>
+
+          <td style="color: #f10001; width: 100% "
+              *ngIf="artFiche.ficheArrivageFinances[0] && artFiche.ficheArrivageFinances[0].cleDouan == false">
+            risque d'ecart transport exterieure
+          </td>
+
+
+          <td
+            *ngIf="artFiche.ficheArrivageFinances[0]==null && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Finance niveau 2'">
+            <p>Verifier cle de Doaun : </p>
+            <button class="btn btn-primary" (click)="cleDouanValide(artFiche)">
+              <a class="fa fa-check"></a>
+            </button>
+            <button class="btn btn-danger" (click)="cleDouanNotValide(artFiche)">
+              <a class="fa fa-times"></a>
+            </button>
+          </td>
+        </div>
+
+        <div
+          *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].inventairePhysique==false">
+          <td style="color: #f10001"
+              *ngIf="artFiche.ficheArrivageFinances[0] && artFiche.ficheArrivageFinances[0].cleExterne == true">
+            Service Achat
+          </td>
+
+          <td
+            *ngIf="artFiche.ficheArrivageFinances[0]==null && authService.user && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Finance niveau 2'">
+            <p>Verifier cle externe: </p>
+            <button class="btn btn-primary" (click)="cleExterneEcartvalide(artFiche)">
+              <a class="fa fa-check"></a>
+            </button>
+          </td>
+        </div>
+      </div>
+
+    </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="ficheArrivage">
+    <div class="card" *ngFor="let artFiche of ficheArrivage.articleFicheArrivageAchats; let i = index">
+      <div class="card-header">
+        Reference Machine : {{artFiche.model.refMachine}}
+        <div class="float-right">
+          Numero de conteneurs : {{artFiche.conteneur.numConteneur}}
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h5 class="card-title">Service Achat</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <h5 class="card-title">Image Exterieur Conteneur</h5>
+            <div class="row">
+              <div class="col-md-3" *ngFor="let img of artFiche.imagesOutSide">
+                <a href="{{authService.host+img.name}}" data-lightbox="image-1">
+                  <img src="{{authService.host+img.name}}" class="img-thumbnail" height="150"
+                       width="150">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h5 class="card-title">Image Interieur Conteneur</h5>
+            <div class="row">
+              <div class="col-md-3" *ngFor="let img of artFiche.imagesInside">
+                <a href="{{authService.host+img.name}}" data-lightbox="image-1">
+                  <img src="{{authService.host+img.name}}" class="img-thumbnail" height="150"
+                       width="150">
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <h5 class="card-title">Service Transitaire</h5>
+        <div *ngIf="artFiche.ficheArrivageTransitaires[0] && !artFiche.dumes[0]">
+          <div class="row">
+            <div class="col-md-6">
+              <h5 class="card-title">Image Exterieur Conteneur</h5>
+              <div class="row">
+                <div class="col-md-3" *ngFor="let img of artFiche.ficheArrivageTransitaires[0].imagesOutSide">
+                  <a href="{{authService.host+img.name}}" data-lightbox="image-2">
+                    <img src="{{authService.host+img.name}}" class="img-thumbnail" height="150"
+                         width="150">
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <h5 class="card-title">Image Interieur Conteneur</h5>
+              <div class="row">
+                <div class="col-md-3" *ngFor="let img of artFiche.ficheArrivageTransitaires[0].imagesInside">
+                  <a href="{{authService.host+img.name}}" data-lightbox="image-2">
+                    <img src="{{authService.host+img.name}}" class="img-thumbnail" height="150"
+                         width="150">
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="artFiche.dumes[0]">
+          <h5 class="card-title">Dume</h5>
+          <div class="row">
+            <div class="col-md-3">
+              <a href="{{authService.host+artFiche.dumes[0].image}}" data-lightbox="image-2">
+                <img src="{{authService.host+artFiche.dumes[0].image}}" class="img-thumbnail" height="150"
+                     width="150">
+              </a>
+            </div>
+          </div>
+        </div>
+
+
+        <div *ngIf="artFiche.ficheArrivageMagasiniers[0]">
+          <h5 class="card-title">Service Magasinier</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <h5 class="card-title">Image Exterieur Conteneur</h5>
+              <div class="row">
+                <div class="col-md-3" *ngFor="let img of artFiche.ficheArrivageMagasiniers[0].imagesOutSide">
+                  <a href="{{authService.host+img.name}}" data-lightbox="image-3">
+                    <img src="{{authService.host+img.name}}" class="img-thumbnail" height="150"
+                         width="150">
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h5 class="card-title">Image Interieur Conteneur</h5>
+              <div class="row">
+                <div class="col-md-3" *ngFor="let img of artFiche.ficheArrivageMagasiniers[0].imagesInside">
+                  <a href="{{authService.host+img.name}}" data-lightbox="image-3">
+                    <img src="{{authService.host+img.name}}" class="img-thumbnail" height="150"
+                         width="150">
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

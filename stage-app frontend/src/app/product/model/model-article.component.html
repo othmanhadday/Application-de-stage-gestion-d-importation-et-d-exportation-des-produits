@@ -1,0 +1,267 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+<div *ngIf="authService.user && authService.user.role">
+
+  <div class="card mx-0 my-1">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-2">
+          <button type="button"
+                  *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'"
+                  class="btn btn-info" data-toggle="modal" data-target="#myModalModel">
+            <i class="fa fa-plus"></i>
+          </button>
+          <button class="btn btn-primary" (click)="print()">export pdf</button>
+        </div>
+        <!--      <div class="col-md-10">-->
+        <!--        <div class="form-group">-->
+        <!--          <input type="text" class="form-control" placeholder="Search Article" [(ngModel)]="searchValue"-->
+        <!--                 (ngModelChange)="searchArticle($event)">-->
+        <!--        </div>-->
+        <!--      </div>-->
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModalModel" role="dialog">
+          <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title text-left">Ajouter Model</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="article-select">Select Article</label>
+                      <select class="form-control" [(ngModel)]="model.article" id="article-select">
+                        <option *ngFor="let article of articles" [ngValue]="article">{{article.name}}</option>
+                      </select>
+                      <div *ngIf="error.modelArticle!=null" class="alert alert-danger py-0 my-1">
+                        <h6>{{error.modelArticle}}</h6>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="refModel">Ref Model</label>
+                      <input type="text" class="form-control" [(ngModel)]="model.refMachine" id="refModel"
+                             placeholder="Ref Model">
+                      <div *ngIf="error.modelRefMachine!=null" class="alert alert-danger py-0 my-1">
+                        <h6>{{error.modelRefMachine}}</h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="nomModel">nom Model</label>
+                      <input type="text" class="form-control" [(ngModel)]="model.nomMachine" id="nomModel"
+                             placeholder="nom Model">
+                      <div *ngIf="error.modelNomMachine!=null" class="alert alert-danger py-0 my-1">
+                        <h6>{{error.modelNomMachine}}</h6>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="imageDiplomes">Sélectionner votre Diplomes ( Moins de 300 Ko)</label>
+                      <input type="file" class="form-control-file" id="imageDiplomes"
+                             (change)="onSelectedImageModel($event)">
+                      <div *ngIf="error.image!=null" class="alert alert-danger py-0 my-1">
+                        <h6>{{error.image}}</h6>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="quantite">Quantite total</label>
+                      <input type="number" class="form-control" [(ngModel)]="model.quantiteTotal" id="quantite" placeholder="0">
+                      <div *ngIf="error.modelPrix!=null" class="alert alert-danger py-0 my-1">
+                        <h6>{{error.modelPrix}}</h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" (click)="addModel()">save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!--table show all Models-->
+  <div class="row ">
+    <!--table show all article-->
+    <div class="w-100 h-100 overflow-auto">
+      <div class="card w-100">
+        <div class="card-header ">Product list</div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+            <tr>
+              <td>Id</td>
+              <td>Ref Machine</td>
+              <td>nom Machine</td>
+              <td>Article</td>
+              <td>Quantite</td>
+              <td>image</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let model of models | paginate: { itemsPerPage: 8, currentPage: page }">
+              <td>{{model.id}}</td>
+              <td>{{model.refMachine}}</td>
+              <td>{{model.nomMachine}}</td>
+              <td>{{model.article.name}}</td>
+              <td>{{model.quantiteTotal}}</td>
+              <td>
+                <a href="{{authService.host+model.image}}" data-lightbox="image-1">
+                  <img src="{{authService.host+model.image}}" class="img-thumbnail" height="70"
+                       width="70">
+                </a>
+              </td>
+              <td *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'">
+                <button class="btn btn-warning" (click)="EditModel(model)">
+                  <i class="fa fa-edit"></i>
+                </button>
+                <button class="btn btn-danger" (click)="confirmationDeleteModel(model)">
+                  <i class="fa fa-trash-o"></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <div class="has-text-centered">
+            <pagination-controls (pageChange)="page = $event"></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!--delete Article confirmation model-->
+  <div class="modal fade" id="ModalDeleteModel" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title text-left">Delete Article {{model.nomMachine}}</h4>
+          <button type="button" class="close" (click)="closeModeldelete()" data-dismiss="modal">&times;</button>
+
+        </div>
+        <div class="modal-body">
+          <h6> vous avez sûre supprimer Article id : {{model.id}}</h6>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" (click)="deleteModel()">Delete</button>
+          <button type="button" class="btn btn-primary" (click)="closeModeldelete()" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!--Edit models confirmation modal-->
+  <div class="modal fade" data-keyboard="false" data-backdrop="static" id="ModeleEditmodel" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title text-left">Edit Model id {{model.id}}</h4>
+          <button type="button" class="close" (click)="closeModelEdit()" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="article-selectedit">Select Article</label>
+                <select class="form-control" [(ngModel)]="model.article" id="article-selectedit">
+                  <option *ngFor="let article of articles" [ngValue]="article">{{article.name}}</option>
+                </select>
+                <div *ngIf="error.modelArticle!=null" class="alert alert-danger py-0 my-1">
+                  <h6>{{error.modelArticle}}</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="refModeledit">Ref Model</label>
+                <input type="text" class="form-control" [(ngModel)]="model.refMachine" id="refModeledit"
+                       placeholder="Ref Model">
+                <div *ngIf="error.modelRefMachine!=null" class="alert alert-danger py-0 my-1">
+                  <h6>{{error.modelRefMachine}}</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="nomModeledit">nom Model</label>
+                <input type="text" class="form-control" [(ngModel)]="model.nomMachine" id="nomModeledit"
+                       placeholder="nom Model">
+                <div *ngIf="error.modelNomMachine!=null" class="alert alert-danger py-0 my-1">
+                  <h6>{{error.modelNomMachine}}</h6>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="imageDiplomesedit">Sélectionner votre image Model ( Moins de 300 Ko)</label>
+                <input type="file" class="form-control-file" id="imageDiplomesedit"
+                       (change)="onSelectedImageModel($event)">
+                <div *ngIf="model.image == modelImage">
+                  <a href="{{authService.host+model.image}}" data-lightbox="image-1">
+                    <img *ngIf="model.image" src="{{authService.host+model.image}}" class="img-thumbnail" height="70"
+                         width="70">
+                  </a>
+                </div>
+                <div *ngIf="error.image!=null" class="alert alert-danger py-0 my-1">
+                  <h6>{{error.image}}</h6>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="quantiteEdit">Quantite total</label>
+                <input type="number" class="form-control" [(ngModel)]="model.quantiteTotal" id="quantiteEdit"
+                       placeholder="0">
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" (click)="updateCategorie()" class="btn btn-primary">update</button>
+          <button type="button" class="btn btn-danger" (click)="closeModelEdit()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+

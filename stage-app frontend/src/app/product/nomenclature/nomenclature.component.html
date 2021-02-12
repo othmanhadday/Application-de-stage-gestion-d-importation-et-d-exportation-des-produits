@@ -1,0 +1,514 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+<div *ngIf="authService.user && authService.user.role">
+<div class="card my-1 mx-0">
+  <div class="card-body">
+    <div class="row ">
+      <div class="col-md-3">
+        <button type="button"
+                *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'"
+                class="btn btn-info " data-toggle="modal" data-target="#myModalModel">
+          <i class="fa fa-plus"></i>
+        </button>
+        <button class="btn btn-primary" (click)="print()">export pdf</button>
+      </div>
+      <div class="col-md-8">
+        <div class="form-group">
+          <!--      <input type="text" class="form-control" placeholder="Search Article" [(ngModel)]="searchValue"-->
+          <!--             (ngModelChange)="searchArticle($event)">-->
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="myModalModel" role="dialog">
+        <div class="modal-dialog modal-lg">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title text-left">Ajouter un nouveau piece de rechange</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="article-select">Select Type : </label>
+                    <select class="form-control" [(ngModel)]="nomenclature.typeNomenclature" id="article-select">
+                      <option *ngFor="let type of typeNomencatures" [ngValue]="type">{{type.typeName}}</option>
+                    </select>
+                    <div *ngIf="error.typeNomen!=null" class="alert alert-danger py-0 my-1">
+                      <h6>{{error.typeNomen}}</h6>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="refIntern">Ref Intern</label>
+                    <input type="text" class="form-control" [(ngModel)]="nomenclature.refIntern" id="refIntern"
+                           placeholder="Ref Intern">
+                    <div *ngIf="error.refIntern!=null" class="alert alert-danger py-0 my-1">
+                      <h6>{{error.refIntern}}</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="nomFr">Nom Francais</label>
+                    <input type="text" class="form-control" [(ngModel)]="nomenclature.nomFr" id="nomFr"
+                           placeholder="Nom Francais">
+                    <div *ngIf="error.nomFr!=null" class="alert alert-danger py-0 my-1">
+                      <h6>{{error.nomFr}}</h6>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="nomAr">Nom Arabe</label>
+                    <input type="text" class="form-control" [(ngModel)]="nomenclature.nomAr" id="nomAr"
+                           placeholder="Nom Arabe">
+                    <div *ngIf="error.nomAr!=null" class="alert alert-danger py-0 my-1">
+                      <h6>{{error.nomAr}}</h6>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="nomEn">Nom Englais</label>
+                    <input type="text" class="form-control" [(ngModel)]="nomenclature.nomEn" id="nomEn"
+                           placeholder="Nom Englais">
+                    <div *ngIf="error.nomEn!=null" class="alert alert-danger py-0 my-1">
+                      <h6>{{error.nomEn}}</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="codeSage">Code Sage</label>
+                    <input type="text" class="form-control" [(ngModel)]="nomenclature.codeSage" id="codeSage"
+                           placeholder="Code Sage">
+                    <div *ngIf="error.codeSage!=null" class="alert alert-danger py-0 my-1">
+                      <h6>{{error.codeSage}}</h6>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="codeShort">Code Short</label>
+                    <input type="text" class="form-control" [(ngModel)]="nomenclature.codeShort" id="codeShort"
+                           placeholder="Code Short">
+                    <div *ngIf="error.codeShort!=null" class="alert alert-danger py-0 my-1">
+                      <h6>{{error.codeShort}}</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="designation">Designation</label>
+                    <input type="text" class="form-control" [(ngModel)]="nomenclature.designation" id="designation"
+                           placeholder="Designation">
+                    <div *ngIf="error.designation!=null" class="alert alert-danger py-0 my-1">
+                      <h6>{{error.designation}}</h6>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="imageDiplomes">Sélectionner image de piece de rechange ( Moins de 300 Ko)</label>
+                    <input type="file" class="form-control-file" id="imageDiplomes"
+                           (change)="onSelectedImageNomenclature($event)">
+                    <div *ngIf="error.image!=null" class="alert alert-danger py-0 my-1">
+                      <h6>{{error.image}}</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" (click)="AddNomenclature()">save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--table show all Nomenclature-->
+<div class="row ">
+  <!--table show all Nomenclature-->
+  <div class="w-100 h-100 overflow-auto">
+    <div class="card w-100">
+      <div class="card-header ">Piece de Rechange list</div>
+      <div class="card-body">
+        <table class="table">
+          <thead>
+          <tr>
+            <td>Id</td>
+            <td>Ref Interne</td>
+            <td>nom Fr|Ar|En</td>
+            <td>Designation</td>
+            <td>Code Short</td>
+            <td>Code Sage</td>
+            <td>Type</td>
+            <td>image</td>
+          </tr>
+          </thead>
+          <tbody *ngFor="let piece of nomenclatures | paginate: { itemsPerPage: 8, currentPage: page }">
+          <tr>
+            <td>{{piece.id}}</td>
+            <td>{{piece.refIntern}}</td>
+            <td>
+              {{piece.nomFr}} |
+              {{piece.nomAr}} |
+              {{piece.nomEn}}
+            </td>
+            <td>{{piece.designation}}</td>
+            <td>{{piece.codeShort}}</td>
+            <td>{{piece.codeSage}}</td>
+            <td>{{piece.typeNomenclature.typeName}}</td>
+            <td>
+              <a href="{{authService.host+piece.image}}" data-lightbox="image-1">
+                <img src="{{authService.host+piece.image}}" class="img-thumbnail" height="70"
+                     width="70">
+              </a>
+            </td>
+            <td>
+              <button class="btn btn-warning"
+                      *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'"
+                      (click)="EditNomenclature(piece)">
+                <i class="fa fa-edit"></i>
+              </button>
+              <button class="btn btn-danger"
+                      *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'"
+                      (click)="confirmationDeleteNomenclature(piece)">
+                <i class="fa fa-trash-o"></i>
+              </button>
+              <button class="btn btn-primary"
+                      *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'"
+                      (click)="addModelToNomenclature(piece)">
+                <i class="fa fa-plus"></i>
+              </button>
+              <button class="btn btn-primary" (click)="showModelsOfNomeclature(piece)">
+                <i class="fa fa-list"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="has-text-centered">
+          <pagination-controls (pageChange)="page = $event"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--delete Nomenclature confirmation model-->
+<div class="modal fade" id="ModalDeletePiece" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Delete Piece de rechange {{nomenclature.designation}}</h4>
+        <button type="button" class="close" (click)="closeModeldelete()" data-dismiss="modal">&times;</button>
+
+      </div>
+      <div class="modal-body">
+        <h6> vous avez sûre supprimer Piece de rechange id : {{nomenclature.id}}</h6>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="deleteNomenclature()">Delete</button>
+        <button type="button" class="btn btn-primary" (click)="closeModeldelete()" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--Edit Nomenclature confirmation modal-->
+<div class="modal fade" data-keyboard="false" data-backdrop="static" id="NomenclatureEditmodal" tabindex="-1"
+     role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Edit Piece de rechange id {{nomenclature.id}}</h4>
+        <button type="button" class="close" (click)="closeModelEdit()" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="piece-select">Select Type : </label>
+              <select class="form-control" [(ngModel)]="nomenclature.typeNomenclature"
+                      id="piece-select">
+                <option *ngFor="let type of typeNomencatures" [ngValue]="type">{{type.typeName}}</option>
+              </select>
+              <div *ngIf="error.typeNomen!=null" class="alert alert-danger py-0 my-1">
+                <h6>{{error.typeNomen}}</h6>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="refInternEdit">Ref Intern</label>
+              <input type="text" class="form-control" [(ngModel)]="nomenclature.refIntern" id="refInternEdit"
+                     placeholder="Ref Intern">
+              <div *ngIf="error.refIntern!=null" class="alert alert-danger py-0 my-1">
+                <h6>{{error.refIntern}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="nomFredit">Nom Francais</label>
+              <input type="text" class="form-control" [(ngModel)]="nomenclature.nomFr" id="nomFredit" ngModel
+                     placeholder="Nom Francais">
+              <div *ngIf="error.nomFr!=null" class="alert alert-danger py-0 my-1">
+                <h6>{{error.nomFr}}</h6>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="nomAredit">Nom Arabe</label>
+              <input type="text" class="form-control" [(ngModel)]="nomenclature.nomAr" id="nomAredit" ngModel
+                     placeholder="Nom Arabe">
+              <div *ngIf="error.nomAr!=null" class="alert alert-danger py-0 my-1">
+                <h6>{{error.nomAr}}</h6>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="nomEnedit">Nom Englais</label>
+              <input type="text" class="form-control" [(ngModel)]="nomenclature.nomEn" id="nomEnedit" ngModel
+                     placeholder="Nom Englais">
+              <div *ngIf="error.nomEn!=null" class="alert alert-danger py-0 my-1">
+                <h6>{{error.nomEn}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="codeSageedit">Code Sage</label>
+              <input type="text" class="form-control" [(ngModel)]="nomenclature.codeSage" id="codeSageedit"
+                     placeholder="Code Sage">
+              <div *ngIf="error.codeSage!=null" class="alert alert-danger py-0 my-1">
+                <h6>{{error.codeSage}}</h6>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="codeShortedit">Code Short</label>
+              <input type="text" class="form-control" [(ngModel)]="nomenclature.codeShort" id="codeShortedit" ngModel
+                     placeholder="Code Short">
+              <div *ngIf="error.codeShort!=null" class="alert alert-danger py-0 my-1">
+                <h6>{{error.codeShort}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="designationedit">Designation</label>
+              <input type="text" class="form-control" id="designationedit" [(ngModel)]="nomenclature.designation"
+                     placeholder="Designation"/>
+              <div *ngIf="error.designation!=null" class="alert alert-danger py-0 my-1">
+                <h6>{{error.designation}}</h6>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="imgePiece">Sélectionner image de piece de rechange ( Moins de 300 Ko)</label>
+              <input type="file" class="form-control-file" id="imgePiece"
+                     (change)="onSelectedImageNomenclature($event)">
+              <a href="{{authService.host+nomenclature.image}}" data-lightbox="image-1">
+                <img *ngIf="nomenclature.image" src="{{authService.host+nomenclature.image}}" class="img-thumbnail"
+                     height="70"
+                     width="70">
+              </a>
+              <div *ngIf="error.image!=null" class="alert alert-danger py-0 my-1">
+                <h6>{{error.image}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-2">
+          <button type="submit" (click)="updateNomenclature()" class="btn btn-primary">update</button>
+          <button type="button" class="btn btn-danger" (click)="closeModelEdit()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--add model to nomenclature modal-->
+<div class="modal fade" id="ModalAddModelToNomenclature" data-keyboard="false" data-backdrop="static" tabindex="-1"
+     role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Add To Piece de rechange {{nomenclature.designation}}</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="cat-select">Select Categorie : </label>
+              <select class="form-control" #mySelect
+                      (change)='categorieOnSelect(mySelect.value)' id="cat-select">
+                <option selected>Categorie</option>
+                <option *ngFor="let cat of categories" [value]="cat['@id']">{{cat.name}}</option>
+              </select>
+              <div *ngIf="error.typeNomen!=null" class="alert alert-danger py-0 my-1">
+                <h6>{{error.typeNomen}}</h6>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6" *ngIf="selectshow==true">
+            <div class="form-group">
+              <label for="art-select">Select Article : </label>
+              <select class="form-control" #mySelect
+                      (change)='ArticleOnSelect(mySelect.value)' id="art-select">
+                <option selected>Article</option>
+                <option *ngFor="let article of articlesByCat" [value]="article['@id']">{{article.name}}</option>
+              </select>
+              <div *ngIf="error.typeNomen!=null" class="alert alert-danger py-0 my-1">
+                <h6>{{error.typeNomen}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-3" *ngFor="let model of modelsByArticle">
+            <div class="card border-0">
+              <div class="card-body">
+                <img src="{{authService.host+model.image}}" class="card-img" height="100" width="100">
+                <div class="row">
+                  <div class="card-title">
+                    <div class="text-left">
+                      {{model.nomMachine}}
+                    </div>
+                    <div class="float-right" *ngIf="modelfind(model)!=true">
+                      <button class="btn btn-warning" (click)="addModelselectedToNomenclature(model)">
+                        <i class="fa fa-check-circle" style="color: #f15351"></i>
+                      </button>
+                    </div>
+                    <div class="float-right" *ngIf="modelfind(model)==true">
+                      <i class="fa fa-check-circle" style="color: #1ef100"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="confirmAddModelToNomenclature()">Add</button>
+        <button type="button" class="btn bg-danger" (click)="closeModeldelete()" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--show models of nomenclature modal-->
+<div class="modal fade" id="showModelsofNomenclature" data-keyboard="false" data-backdrop="static" tabindex="-1"
+     role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Show Models to every Nomenclature {{nomenclature.designation}}</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+      </div>
+      <div class="modal-body">
+
+        <table class="table">
+          <thead>
+          <tr>
+            <td>Id</td>
+            <td>Ref Machine</td>
+            <td>nom Machine</td>
+            <td>Quantite</td>
+            <td>image</td>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let model of models | paginate: { itemsPerPage: 8, currentPage: page }">
+            <td>{{model.id}}</td>
+            <td>{{model.refMachine}}</td>
+            <td>{{model.nomMachine}}</td>
+            <td>{{model.quantiteTotal}}</td>
+            <td>
+              <a href="{{authService.host+model.image}}" data-lightbox="image-1">
+                <img src="{{authService.host+model.image}}" class="img-thumbnail" height="70"
+                     width="70">
+              </a>
+            </td>
+            <td>
+              <button class="btn btn-danger"
+                      *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'"
+                      (click)="deleteModelsofNomenclature(model)">
+                <i class="fa fa-trash-o"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn bg-danger" (click)="closeModeldelete()" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>

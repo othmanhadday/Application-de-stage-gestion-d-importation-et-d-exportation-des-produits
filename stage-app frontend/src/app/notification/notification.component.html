@@ -1,0 +1,17 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+
+<div class="list-group">
+
+
+  <a *ngFor="let noti of notifications" [ngClass]="{'active':noti.seen==false}"
+     (click)="editSeenNotification(noti)"
+     class="list-group-item list-group-item-action flex-column align-items-start pointer">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1">{{noti.name}}</h5>
+      <small>{{noti.createdAt | date:'dd/MM/yyyy HH:mm'}}</small>
+    </div>
+  </a>
+
+
+</div>

@@ -1,0 +1,20 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+<div class="row" *ngIf="fichesArrivages">
+  <div class="col-md-3" *ngFor="let fiche of fichesArrivages">
+    <div class="card shadow" (click)="ficheArrivageDetail(fiche)" style="border-radius: 0px" *ngIf="fiche.user">
+      <div class="card-header text-center" style="background-color: #97cbf1">Fiche Arrivage : {{fiche.id}} </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            {{fiche.user.fullName}}
+          </div>
+          <div class="col-md-6">
+
+            {{fiche.createdAt | date:'short'}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

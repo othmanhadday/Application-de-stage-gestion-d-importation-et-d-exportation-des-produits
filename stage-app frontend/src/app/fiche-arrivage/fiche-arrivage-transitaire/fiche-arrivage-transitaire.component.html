@@ -1,0 +1,449 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+<div *ngIf="authService.user && authService.user.role">
+
+  <!--  // inform other services to activate fiche arrivage-->
+  <div class="card" *ngIf="artFiche && artFiche.ficheArrivageTransitaires[0]">
+    <div class="card-body">
+      <div class="row"
+           *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 1' && artFiche.ficheArrivageTransitaires[0] && artFiche.dumes[0]">
+        <div class="col-md-6">
+          Service Transitaire Niveau 2 :
+          <div
+            *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare2">
+            <i class="fa fa-check" style="color: #1ef100"></i>
+          </div>
+          <div
+            *ngIf="artFiche.ficheArrivageTransitaires[0] && !artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare2">
+            <button class="btn btn-warning" (click)="informSerTransitaire2()">
+              <i class="fa fa-exclamation-triangle"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          Service Transitaire Nveau 0 :
+          <div
+            *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare0">
+            <i class="fa fa-check" style="color: #1ef100"></i>
+          </div>
+          <div
+            *ngIf="artFiche.ficheArrivageTransitaires[0] && !artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare0">
+            <button class="btn btn-warning" (click)="informSerTransitaire0()">
+              <i class="fa fa-exclamation-triangle"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 2' &&
+       artFiche.ficheArrivageTransitaires[0] && !artFiche.dumes[0]">
+        <div class="col-md-6">
+          Service Transitaire Nveau 1 :
+          <div
+            *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare1">
+            <i class="fa fa-check" style="color: #1ef100"></i>
+          </div>
+          <div
+            *ngIf="artFiche.ficheArrivageTransitaires[0] && !artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare1">
+            <button class="btn btn-warning" (click)="informSerTransitaire1()">
+              <i class="fa fa-exclamation-triangle"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          Service Transitaire Nveau 0 :
+          <div
+            *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare0">
+            <i class="fa fa-check" style="color: #1ef100"></i>
+          </div>
+          <div
+            *ngIf="artFiche.ficheArrivageTransitaires[0] && !artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare0">
+            <button class="btn btn-warning" (click)="informSerTransitaire0()">
+              <i class="fa fa-exclamation-triangle"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="card mb-5 shadow" style="border-radius: 0px">
+    <div class="card-body">
+      <table class="table" *ngIf="artFiche">
+        <thead>
+        <tr>
+          <td>Ref Machine</td>
+          <td>nom Machine</td>
+          <td>image</td>
+          <td>Conteneur</td>
+          <td>Quantite Transitaire</td>
+          <td>Inventaire Physique</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>{{artFiche.model.refMachine}}</td>
+          <td>{{artFiche.model.nomMachine}}</td>
+          <td>
+            <a href="{{authService.host+artFiche.model.image}}" data-lightbox="image-1">
+              <img src="{{authService.host+artFiche.model.image}}" class="img-thumbnail" height="70"
+                   width="70">
+            </a>
+          </td>
+          <td>{{artFiche.conteneur.numConteneur}}</td>
+
+          <!--          Inventaire Physique open in port or still close-->
+
+          <div *ngIf=" authService.user.role.service.name == 'Service Transitaire'">
+            <td
+              *ngIf="artFiche.quantiteServTransitaire">
+              {{artFiche.quantiteServTransitaire}}
+            </td>
+            <td
+              *ngIf="!artFiche.quantiteServTransitaire">
+              - -
+            </td>
+          </div>
+
+
+          <td
+            *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].inventairePhysique==true">
+            <div *ngIf="authService.user.role.service.name == 'Service Transitaire'">
+              complet
+            </div>
+          </td>
+          <td
+            *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].inventairePhysique==false">
+            <div *ngIf="authService.user.role.service.name == 'Service Transitaire'">
+              Non complet
+            </div>
+          </td>
+          <td
+            *ngIf="!artFiche.ficheArrivageTransitaires[0] && dateTransitaire()!=true &&
+              authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 2'">
+            <button class="btn btn-primary" (click)="inventairePhysiqueOpen()">
+              <i class="fa fa-check"></i>
+            </button>
+
+            <button class="btn btn-danger" (click)="inventairePhysiqueClose()">
+              <i class="fa fa-times"></i>
+            </button>
+          </td>
+
+          <div *ngIf="authService.user.role.service.name == 'Service Transitaire'">
+            <td
+              *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].inventairePhysique==true &&
+             artFiche.ficheArrivageTransitaires[0].imagesOutSide.length > 0 && artFiche.ficheArrivageTransitaires[0].imagesInside.length > 0">
+              <button class="btn btn-success" (click)="showAllImagesTransitaire(artFiche.ficheArrivageTransitaires[0])">
+                <i class="fa fa-image"></i>
+              </button>
+            </td>
+            <td
+              *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].inventairePhysique==false &&
+              artFiche.dumes[0] && artFiche.dumes[0].image">
+              <button class="btn btn-success" (click)="showImageDume(artFiche.dumes[0])">
+                <i class="fa fa-image"></i>
+              </button>
+            </td>
+          </div>
+
+
+          <!--          inventaire physique non complet -->
+          <td *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].inventairePhysique==false
+                    && !artFiche.dumes[0]
+                    && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 1'">
+            <button class="btn btn-primary" (click)="showDumeCard(artFiche)">
+              add Dume Info
+            </button>
+          </td>
+          <td *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].inventairePhysique==false
+                    && artFiche.dumes[0] && !artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare2
+                    && authService.user && authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 2'">
+            <button class="btn btn-primary" (click)="showDumeCardUpdate()">
+              edit Dume Info
+            </button>
+          </td>
+
+
+          <!--          Validation fiche arrivage service transitaire -->
+          <td *ngIf="artFiche.ficheArrivageTransitaires[0] && !artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare0 &&
+                     authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 0'">
+            <button class="btn btn-primary"
+                    (click)="valideQuantiteServTransitaireNv0(artFiche.ficheArrivageTransitaires[0])">
+              <i class="fa fa-check"></i>
+            </button>
+          </td>
+          <td *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare0 &&
+                     authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 0'">
+            <i class="fa fa-check"></i>
+          </td>
+
+          <td *ngIf="artFiche.ficheArrivageTransitaires[0] && !artFiche.dumes[0] && !artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare1 &&
+                     authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 1'">
+            <button class="btn btn-primary"
+                    (click)="valideQuantiteServTransitaireNv1(artFiche.ficheArrivageTransitaires[0])">
+              <i class="fa fa-check"></i>
+            </button>
+          </td>
+          <td *ngIf="artFiche.ficheArrivageTransitaires[0] && !artFiche.dumes[0] && artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare1 &&
+                     authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 1'">
+            <i class="fa fa-check"></i>
+          </td>
+
+          <td *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.dumes[0] && !artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare2 &&
+                     authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 2'">
+            <button class="btn btn-primary"
+                    (click)="valideQuantiteServTransitaireNv2(artFiche.ficheArrivageTransitaires[0])">
+              <i class="fa fa-check"></i>
+            </button>
+          </td>
+          <td *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.dumes[0] && artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare2 &&
+                     authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 2'">
+            <i class="fa fa-check"></i>
+          </td>
+
+          <!--          Date de sortie from port-->
+          <td *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 2' &&
+                       artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare0 && !artFiche.ficheArrivageTransitaires[0].dateSortiePort">
+            <button class="btn btn-danger" (click)="dateSortieConteneur(artFiche.ficheArrivageTransitaires[0])">
+              <i class="fa fa-clock-o"></i>
+            </button>
+          </td>
+          <td *ngIf="authService.user.role.service.name +' '+ authService.user.role.niveau.name == 'Service Transitaire niveau 2' &&
+                       artFiche.ficheArrivageTransitaires[0].verifierArticlesServTransitare0 && artFiche.ficheArrivageTransitaires[0].dateSortiePort">
+            <i class="fa fa-clock-o" style="color: #1ef100"></i>
+          </td>
+
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!--  add quantite et images par service transitaire Niv2 to chaque Conteneur-->
+<div class="card shadow m-5" *ngIf="verifierquantiteServTransitaire==true">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="qteTrans">Quantite Transitaire</label>
+          <input type="number" class="form-control" placeholder="Quantite : "
+                 [(ngModel)]="artFiche.quantiteServTransitaire" id="qteTrans">
+          <div class="alert-danger alert" *ngIf="error.quantiteServTransitaire!=null">
+            {{error.quantiteServTransitaire}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="imgeTransitaireOutside">Sélectionner image exterieur Conteneur ( Moins de 1 Mo)</label>
+          <input type="file" accept='image/*' class="form-control-file" id="imgeTransitaireOutside"
+                 (change)="onAddImageOutsideToFicheArticleServTransitaire($event)" multiple>
+          <div class="alert-danger alert" *ngIf="error.imageoutside!=null">
+            {{error.imageoutside}}
+          </div>
+        </div>
+        <div class="row" *ngIf="artFiche.ficheArrivageTransitaires[0]">
+          <div class="col-md-2" *ngFor="let u of artFiche.ficheArrivageTransitaires[0].urlOutside">
+            <a [href]="u" data-lightbox="image-outside">
+              <img *ngIf="u" [src]="u" class="img-thumbnail"
+                   height="100"
+                   width="100">
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="imgeTransitaireInside">Sélectionner image interieur Conteneur ( Moins de 1 Mo)</label>
+          <input type="file" accept='image/*' class="form-control-file" id="imgeTransitaireInside"
+                 (change)="onAddImageInsideToFicheArticleServTransitaire($event)" multiple>
+          <div class="alert-danger alert" *ngIf="error.imageinside!=null">
+            {{error.imageinside}}
+          </div>
+        </div>
+        <div class="row" *ngIf="artFiche.ficheArrivageTransitaires[0]">
+          <div class="col-md-2" *ngFor="let u of artFiche.ficheArrivageTransitaires[0].urlinside">
+            <a [href]="u" data-lightbox="image-inside">
+              <img *ngIf="u" [src]="u" class="img-thumbnail"
+                   height="100"
+                   width="100">
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <button class="btn btn-primary" (click)="saveQuantiteServTransitaire()">
+        save
+      </button>
+    </div>
+  </div>
+</div>
+
+<!--show images to fiche Arrivage Transtaire modal-->
+<div class="modal fade" id="showImagesOfFicheArrivageTransitaire" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content" *ngIf="artFiche">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Add To Piece de rechange </h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+      </div>
+      <div class="modal-body">
+        <div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+        <!--        <div class="row" *ngIf="editButton==true">-->
+        <!--          <div class="form-group">-->
+        <!--            <label for="imgePiece">Sélectionner image de piece de rechange ( Moins de 300 Ko)</label>-->
+        <!--            <input type="file" accept='image/*' class="form-control-file" id="imgePiece"-->
+        <!--                   (change)="onAddImageToFicheArticle($event, articleFicheArrivageAchat)" multiple>-->
+        <!--            <div class="alert alert-danger" *ngIf="error.image">-->
+        <!--              {{error.image}}-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </div>-->
+
+        <h5>Images exterieur Conteneur</h5>
+        <div class="row"
+             *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].imagesOutSide">
+          <div class="col-md-3" *ngFor="let u of artFiche.ficheArrivageTransitaires[0].imagesOutSide">
+            <a [href]="authService.host+u.name" data-lightbox="image-1">
+              <img *ngIf="u.name" [src]="authService.host+u.name" class="img-thumbnail"
+                   height="120"
+                   width="120">
+            </a>
+          </div>
+        </div>
+
+        <h5>Images Interieur Conteneur</h5>
+        <div class="row"
+             *ngIf="artFiche.ficheArrivageTransitaires[0] && artFiche.ficheArrivageTransitaires[0].imagesInside">
+          <div class="col-md-3" *ngFor="let u of artFiche.ficheArrivageTransitaires[0].imagesInside">
+            <a [href]="authService.host+u.name" data-lightbox="image-1">
+              <img *ngIf="u.name" [src]="authService.host+u.name" class="img-thumbnail"
+                   height="120"
+                   width="120">
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn bg-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--  add Dume chaque Conteneur-->
+<div class="card shadow m-5" *ngIf="showAddDume==true">
+  <div class="card-header">Add Dume</div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <input type="number" class="form-control" placeholder="Quantite : "
+                 [(ngModel)]="artFiche.quantiteServTransitaire">
+          <div class="alert-danger alert" *ngIf="error.quantiteServTransitaire!=null">
+            {{error.quantiteServTransitaire}}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="form-group">
+          <label for="imgDume">Sélectionner image de piece de rechange ( Moins de 1 Mo)</label>
+          <input type="file" accept='image/*' class="form-control-file" id="imgDume"
+                 (change)="addImageDume($event)">
+          <div class="alert-danger alert" *ngIf="error.image!=null">
+            {{error.image}}
+          </div>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-primary" (click)="saveDume()">
+          save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--show image de Dume to fiche Arrivage Transtaire modal-->
+<div class="modal fade" id="showImageDume" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content" *ngIf="dume">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Dume Image </h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+      </div>
+      <div class="modal-body">
+        <div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+        <div class="row">
+          <a [href]="authService.host+dume.image" data-lightbox="image-1">
+            <img *ngIf="dume.image" [src]="authService.host+dume.image" class="img-thumbnail"
+                 height="150"
+                 width="150">
+          </a>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn bg-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--  Edit Dume chaque Conteneur-->
+<div class="card shadow m-5" *ngIf="showeditDume==true">
+  <div class="card-header">edit Dume</div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <input type="number" class="form-control" placeholder="Quantite : "
+                 [(ngModel)]="artFiche.quantiteServTransitaire">
+          <div class="alert-danger alert" *ngIf="error.quantiteServTransitaire!=null">
+            {{error.quantiteServTransitaire}}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="form-group">
+          <label for="imgDumeedit">Sélectionner image de piece de rechange ( Moins de 1 Mo)</label>
+          <input type="file" accept='image/*' class="form-control-file" id="imgDumeedit"
+                 (change)="updateImageDume($event)">
+          <a *ngIf="artFiche.dumes[0]"
+             [href]="authService.host+artFiche.dumes[0].image" data-lightbox="image-1">
+            <img *ngIf="artFiche.dumes[0].image"
+                 [src]="authService.host+artFiche.dumes[0].image"
+                 class="img-thumbnail"
+                 height="70"
+                 width="70">
+          </a>
+          <!--          <div class="alert-danger alert" *ngIf="error.image!=null">-->
+          <!--            {{error.image}}-->
+          <!--          </div>-->
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-primary" (click)="updateDume(artFiche.dumes[0])">
+          update
+        </button>
+        <button class="btn btn-danger" (click)="showeditDume=false">
+          close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

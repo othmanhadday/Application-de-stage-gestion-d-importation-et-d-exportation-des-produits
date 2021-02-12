@@ -1,0 +1,30 @@
+<div *ngIf="showLoadingIndicator"   class="loading">Loadinghhhhh</div>
+<div class="container login-container">
+  <div class="row justify-content-center">
+    <div class="col-md-6  login-form-2">
+      <div *ngIf="messageSessionExpire" class="alert alert-warning">
+        {{ messageSessionExpire }}
+      </div>
+      <div class="alert alert-danger" *ngIf="mode==1">
+        <p class="text-center"> Compte Introuvable </p>
+      </div>
+      <form #f="ngForm" (ngSubmit)="onLogin(f.value)">
+        <div class="form-group">
+          <input type="text" class="form-control" name="username" placeholder="Your Username *" ngModel required="required" value="" />
+        </div>
+        <div class="form-group">
+          <input type="password" class="form-control" name="password" placeholder="Your Password *" ngModel required value="" />
+        </div>
+        <div class="form-group text-center">
+          <input type="submit" class="btn w-75 submitbtn" value="Login" />
+        </div>
+        <div class="form-group text-center">
+          <input type="button" class="btn w-75 registerbtn" routerLink="/register" value="Register" />
+        </div>
+        <div class="form-group">
+          <a href="#" class="ForgetPwd" value="Login">Forget Password?</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

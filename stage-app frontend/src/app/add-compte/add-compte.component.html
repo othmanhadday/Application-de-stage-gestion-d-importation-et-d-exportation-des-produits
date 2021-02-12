@@ -1,0 +1,388 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+<!--modal pour afficher  user deja ajouter -->
+<div class="modal fade" data-keyboard="false" data-backdrop="static" id="myModel" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content" *ngIf="user">
+      <div class="modal-header">
+        <h4 class="modal-title text-left"> {{user.fullName}}</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6 ">
+            <div *ngIf="user.imageUser" class="card-title">
+              <strong>Image Personnel</strong>
+            </div>
+            <div class="card-img text-center">
+              <a href="{{authService.host+user.imageUser}}" data-lightbox="image-1">
+                <img *ngIf="user.imageUser" src="{{authService.host+user.imageUser}}" class="img-thumbnail" height="200"
+                     width="200">
+              </a>
+            </div>
+            <div *ngIf="user.imageCin">
+              <div class="card-title">
+                <strong>Images Carte National</strong>
+              </div>
+              <div class="row justify-content-center  ">
+                <div *ngFor="let img of user.imageCin">
+                  <a href="{{authService.host+img}}" data-lightbox="image-1">
+                    <img src="{{authService.host+img}}" class="img-thumbnail" height="70" width="70">
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="user.imageDiplomes">
+              <div class="card-title">
+                <strong>Images des diplomes</strong>
+              </div>
+              <div class="row justify-content-center  ">
+                <div *ngFor="let img of user.imageDiplomes">
+                  <a href="{{authService.host+img}}" data-lightbox="image-1">
+                    <img src="{{authService.host+img}}" class="img-thumbnail" height="70" width="70">
+                  </a>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+          <div class="col-md-6">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="card-title">Nom :</div>
+                  </div>
+                  <div class="col-6">
+                    <strong class="card-title">{{user.fullName}}</strong>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="card-title">Email :</div>
+                  </div>
+                  <div class="col-6">
+                    <strong class="card-title">{{user.email}}</strong>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="card-title">CIN :</div>
+                  </div>
+                  <div class="col-6">
+                    <strong class="card-title">{{user.cin}}</strong>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="card-title">Tel :</div>
+                  </div>
+                  <div class="col-6">
+                    <strong class="card-title">{{user.tel}}</strong>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="card-title">Service :</div>
+                  </div>
+                  <div class="col-6">
+                    <strong class="card-title">{{user.roles.service.name}}</strong>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="card-title">Niveau :</div>
+                  </div>
+                  <div class="col-6">
+                    <strong class="card-title">{{user.roles.niveau.name}}</strong>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="card-title">Niveau Scolaire :</div>
+                  </div>
+                  <div class="col-6">
+                    <strong class="card-title">{{user.niveauScolaire}}</strong>
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!--card pour afficher tous les user disponibla-->
+<div class="container-fluid">
+  <div class="card mt-5">
+    <div class="card-header">Afficher tous les Compte</div>
+    <div class="card-body">
+      <button class="btn btn-primary" routerLink="/register">
+        <i class="fa fa-plus"></i>
+      </button>
+      <table class="table">
+        <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Full Name</th>
+          <th scope="col">CIN</th>
+          <th scope="col">Email</th>
+          <th scope="col">Tel</th>
+          <th scope="col">Niveau Scolaire</th>
+          <th scope="col">Service</th>
+          <th scope="col">Niveau</th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody *ngFor="let user of AllUsers">
+        <tr class="row-table">
+          <th>{{user.id}}</th>
+          <td>{{user.fullName}}</td>
+          <td>{{user.cin}}</td>
+          <td>{{user.email}}</td>
+          <td>{{user.tel}}</td>
+          <td>{{user.niveauScolaire}}</td>
+          <td>{{user.role.service.name}}</td>
+          <td>{{user.role.niveau.name}}</td>
+          <td scope="row m-0">
+            <button class="btn btn-primary" (click)="showUser(user)">show</button>
+          </td>
+          <td scope="row">
+            <button class="btn btn-success" (click)="showModelEditUser(user)">Edit</button>
+          </td>
+          <td scope="row">
+            <button class="btn btn-danger" (click)="showModeldeleteUser(user)">Delete</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!--modal pour supprimer un user-->
+<div class="modal fade" data-keyboard="false" data-backdrop="static" id="myModelDelete" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content" *ngIf="user">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Delete {{user.fullName}}</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete user <strong>{{user.fullName}}</strong>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="DeleteUserConfirmation()">Delete</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--modal pour editer un user-->
+<div class="modal fade" data-keyboard="false" data-backdrop="static" id="myModelEdit" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content" *ngIf="user">
+      <div class="modal-header">
+        <h4 class="modal-title text-left"> {{user.fullName}}</h4>
+        <button type="button" class="close" (click)="ngOnInit();" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="service-select">Select Service</label>
+              <select class="form-control" id="service-select" [(ngModel)]="user.roles.service.id">
+                <option disabled>Service</option>
+                <option *ngFor="let service of services" [ngValue]="service.id"
+                        [selected]="user.roles.service.id == service.id">{{service.name}}</option>
+              </select>
+              <div class="alert alert-danger pt-0 pb-0" *ngIf="error.service">
+                <p class="text-danger mb-0">{{error.service}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="niveau-select">Select Niveau</label>
+              <select class="form-control" id="niveau-select" [(ngModel)]="user.roles.niveau.id">
+                <option selected="selected" disabled>Niveau</option>
+                <option *ngFor="let niveau of niveaux" [ngValue]="niveau.id">{{niveau.name}}</option>
+              </select>
+              <div class="alert alert-danger pt-0 pb-0" *ngIf="error.niveau">
+                <p class="text-danger mb-0">{{error.niveau}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="cinUser">CIN</label>
+              <input type="text" class="form-control" id="cinUser" [ngClass]="{'shadow-none border-danger' : error.cin}"
+                     placeholder="CIN" [(ngModel)]="user.cin" required="required">
+              <div class="alert alert-danger pt-0 pb-0" *ngIf="error.cin">
+                <p class="text-danger mb-0">{{error.cin}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="nomUser">Nom complet </label>
+              <input type="text" class="form-control" id="nomUser" [ngClass]="{'shadow-none border-danger' : error.nom}"
+                     placeholder="Nom Complet" [(ngModel)]="user.fullName" required="required">
+              <div class="alert alert-danger pt-0 pb-0" *ngIf="error.nom">
+                <p class="text-danger mb-0">{{error.nom}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="emailUser">Email</label>
+              <input disabled type="email" class="form-control" [(ngModel)]="user.email"
+                     [ngClass]="{'shadow-none border-danger' : error.email}" id="emailUser" placeholder="Email "
+                     aria-required="true">
+              <div class="alert alert-danger pt-0 pb-0" *ngIf="error.email">
+                <p class="text-danger mb-0">{{error.email}}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="emailUser">Tel</label>
+              <input type="text" class="form-control" [(ngModel)]="user.tel"
+                     [ngClass]="{'shadow-none border-danger' : error.tel}" id="telUser" placeholder="Tel "
+                     aria-required="true">
+              <div class="alert alert-danger pt-0 pb-0" *ngIf="error.tel">
+                <p class="text-danger mb-0">{{error.tel}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="imageuser">Sélectionner votre image ( Moins de 300 Ko)</label>
+              <input type="file" class="form-control-file" id="imageuser" (change)="onSelectedUserImage($event)">
+              <div class="row" *ngIf="fileisUpdated.user==false">
+                <a href="{{authService.host+user.imageUser}}" data-lightbox="image-1">
+                  <img *ngIf="user.imageUser" src="{{authService.host+user.imageUser}}" class="img-thumbnail"
+                       height="70"
+                       width="70">
+                </a>
+              </div>
+              <div class="alert alert-danger pt-0 pb-0" *ngIf="error.imageUser">
+                <p class="text-danger mb-0">{{error.imageUser}}</p>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="imageCin">Sélectionner votre carte national recto verso ( Moins de 300 Ko) </label>
+              <input type="file" class="form-control-file" id="imageCin" (change)="onSelectedUserCin($event)" multiple>
+              <div class="row " *ngIf="fileisUpdated.cin==false">
+                <div *ngFor="let img of user.imageCin">
+                  <a href="{{authService.host+img}}" data-lightbox="image-1">
+                    <img src="{{authService.host+img}}" class="img-thumbnail" height="70" width="70">
+                  </a>
+                </div>
+              </div>
+              <div class="alert alert-danger pt-0 pb-0" *ngIf="error.imageCin">
+                <p class="text-danger mb-0">{{error.imageCin}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="niveauScolaireUser">Niveau scolaire</label>
+              <input type="text" class="form-control" [(ngModel)]="user.niveauScolaire"
+                     [ngClass]="{'shadow-none border-danger' : error.niveauScolaire}" id="niveauScolaireUser"
+                     placeholder="Niveau scolaire "
+                     aria-required="true">
+              <div class="alert alert-danger pt-0 pb-0" *ngIf="error.niveauScolaire">
+                <p class="text-danger mb-0">{{error.niveauScolaire}}</p>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="imageDiplomes">Sélectionner votre Diplomes ( Moins de 300 Ko)</label>
+              <input type="file" class="form-control-file" id="imageDiplomes" (change)="onSelectedUserDiplomes($event)"
+                     multiple>
+              <div class="row " *ngIf="fileisUpdated.diplomes==false">
+                <div *ngFor="let img of user.imageDiplomes">
+                  <a href="{{authService.host+img}}" data-lightbox="image-1">
+                    <img src="{{authService.host+img}}" class="img-thumbnail" height="70" width="70">
+                  </a>
+                </div>
+              </div>
+              <div class="alert alert-danger pt-0 pb-0" *ngIf="error.imaeDplomes">
+                <p class="text-danger mb-0">{{error.imaeDplomes}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="pwdUser">Mot de pass</label>
+              <input type="password" class="form-control" [(ngModel)]="user.password"
+                     [ngClass]="{'shadow-none border-danger' : error.password}" id="pwdUser" placeholder="Mot de pass "
+                     aria-required="true">
+              <div class="alert alert-danger pt-0 pb-0" *ngIf="error.password">
+                <p class="text-danger mb-0">{{error.password}}</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="submit" (click)="onEdit()" class="btn btn-primary">save</button>
+        <button type="button" class="btn btn-danger" (click)="ngOnInit()" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>

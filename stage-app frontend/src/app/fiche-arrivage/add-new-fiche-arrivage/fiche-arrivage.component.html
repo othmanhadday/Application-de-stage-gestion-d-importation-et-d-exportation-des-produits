@@ -1,0 +1,186 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+<div class="card shadow" style="border-radius:0">
+  <div class="card-body">
+    <div class="row">
+      <button class="btn btn-primary" data-toggle="modal" data-target="#ModalAddModelToNomenclature">
+        <i class="fa fa-plus"></i>
+      </button>
+
+      <div class="alert alert-danger" *ngIf="error.conteneur || error.image">
+        <ul>
+          <li *ngIf="error.conteneur">{{error.conteneur}}</li>
+          <li *ngIf="error.image">{{error.image}}</li>
+        </ul>
+      </div>
+
+      <table class="table" *ngIf="articleFicheArrivageAchats.length!=0">
+        <thead>
+        <tr>
+          <td>Id</td>
+          <td>Ref Machine</td>
+          <td>nom Machine</td>
+          <td>Quantite</td>
+          <td>Prix</td>
+          <td>image</td>
+          <td>Quantite Article</td>
+          <td>Conteneur</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let artFiche of articleFicheArrivageAchats">
+          <td>{{artFiche.model.id}}</td>
+          <td>{{artFiche.model.refMachine}}</td>
+          <td>{{artFiche.model.nomMachine}}</td>
+          <td>{{artFiche.model.quantiteTotal}}</td>
+          <td>{{artFiche.model.prix}}</td>
+          <td>
+            <a href="{{authService.host+artFiche.model.image}}" data-lightbox="image-1">
+              <img src="{{authService.host+artFiche.model.image}}" class="img-thumbnail" height="70"
+                   width="70">
+            </a>
+          </td>
+          <td>
+            <input type="number" [(ngModel)]="artFiche.quantiteServAchat" placeholder="enter quantite : " required="required"
+                   class="form-control">
+          </td>
+          <td >
+            <div class="row">
+              <div class="form-group">
+                <select class="form-control" #mySelect
+                        (change)='addConteneurToFicheArrivage(mySelect.value,artFiche)' id="conteneur-select">
+                  <option selected hidden>Select Conteneur</option>
+                  <option *ngFor="let conteneur of conteneurs"
+                          [value]="conteneur['@id']">{{conteneur.numConteneur}}</option>
+                </select>
+              </div>
+              <div>
+                <i class="fa fa-plus" data-toggle="modal" data-target="#modalAddConteneur" style="color: #21f100"></i>
+              </div>
+            </div>
+          </td>
+          <td>
+            <button class="btn btn-danger" (click)="deleteModelofFicheArrivage(artFiche)">
+              <i class="fa fa-trash-o"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row justify-content-end">
+      <button class="btn btn-primary" (click)="uploadAllDataFicheArrivage()">save</button>
+    </div>
+  </div>
+</div>
+
+
+<!--add articles to fiche Arrivage modal-->
+<div class="modal fade" id="ModalAddModelToNomenclature" data-keyboard="false" data-backdrop="static" tabindex="-1"
+     role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Ajouter Nouveau Fiche Arrivage </h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="cat-select">Select Categorie : </label>
+              <select class="form-control" #mySelect
+                      (change)='categorieOnSelect(mySelect.value)' id="cat-select">
+                <option selected hidden>Select Categories</option>
+                <option *ngFor="let cat of categories" [value]="cat['@id']">{{cat.name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6" *ngIf="selectshow==true">
+            <div class="form-group">
+              <label for="art-select">Select Article : </label>
+              <select class="form-control" #mySelect
+                      (change)='ArticleOnSelect(mySelect.value)' id="art-select">
+                <option selected hidden>Select Articles</option>
+                <option *ngFor="let article of articlesByCategorie" [value]="article['@id']">{{article.name}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-3" *ngFor="let model of modelsByArticle">
+            <div class="card border-0">
+              <div class="card-body">
+                <img src="{{authService.host+model.image}}" class="card-img" height="100" width="100">
+                <div class="row">
+                  <div class="card-title">
+                    <div class="text-left">
+                      {{model.nomMachine}}
+                    </div>
+                    <div class="float-right" *ngIf="modelfind(model)!=true">
+                      <form #f="ngForm" (ngSubmit)="addModelselectedToNomenclature(f.value,model)">
+                        <input type="number" ngModel name="quantite" placeholder="enter quantite : " required="required"
+                               class="form-group">
+                        <div class="my-0 alert-danger alert" *ngIf="error.quantiteServAchat!=null">
+                          {{error.quantiteServAchat}}
+                        </div>
+                        <button type="submit" class="btn btn-warning">
+                          <i class="fa fa-check-circle" style="color: #f15351"></i>
+                        </button>
+                      </form>
+
+                    </div>
+                    <div class="float-right" *ngIf="modelfind(model)==true">
+                      <i class="fa fa-check-circle" style="color: #1ef100"></i>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <!--        <button type="button" class="btn btn-primary" (click)="confirmAddModelToNomenclature()">Add</button>-->
+        <button type="button" class="btn bg-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--add conteneur to BD modal-->
+<div class="modal fade" id="modalAddConteneur" data-keyboard="false" data-backdrop="static" tabindex="-1"
+     role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-left">Ajouter un nouveau Conteneur </h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <input class="form-control" type="text" placeholder="Entrer Num Conteneur : "
+                 [(ngModel)]="conteneur.numConteneur">
+          <div class="my-0 alert-danger alert" *ngIf="error.conteneur!=null">
+            {{error.conteneur}}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="addNewConteneur()">Add</button>
+        <button type="button" class="btn bg-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

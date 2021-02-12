@@ -1,0 +1,214 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+<div *ngIf="authService.user && authService.user.role">
+  <div class="card mx-0 my-1">
+    <div class="card-body">
+      <div class="row m-0">
+        <div class="col-md-2 m-0">
+          <button type="button"
+                  *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'"
+                  class="btn btn-info" data-toggle="modal" data-target="#myModalArticle">
+            <i class="fa fa-plus"></i>
+          </button>
+          <button class="btn btn-primary" (click)="print()">export pdf</button>
+        </div>
+        <!--      <div class="col-md-8 m-0">-->
+        <!--        <div class="form-group">-->
+        <!--          <input type="text" class="form-control" placeholder="Search Article" [(ngModel)]="searchValue"-->
+        <!--                 (ngModelChange)="searchArticle($event)">-->
+        <!--        </div>-->
+        <!--      </div>-->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModalArticle" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title text-left">Ajouter article</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="categorie-select">Select Categorie</label>
+                <select class="form-control" [(ngModel)]="article.categorie" id="categorie-select">
+                  <option selected="selected" disabled>Categories</option>
+                  <option *ngFor="let cat of categories" [ngValue]="cat">{{cat.name}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="refArticle">Ref Article</label>
+                <input type="text" class="form-control" [(ngModel)]="article.refArticle" id="refArticle"
+                       placeholder="Ref Article">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="nomArticle">nom Article</label>
+                <input type="text" class="form-control" [(ngModel)]="article.name" id="nomArticle"
+                       placeholder="nom Article">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="quantite">Quantite total</label>
+                <input type="text" class="form-control" [(ngModel)]="article.quantiteTotal" id="quantite"
+                       placeholder="0">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" (click)="addArticle()">save</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!--table show all Articles-->
+  <div class="row " *ngIf="articles">
+    <!--table show all article-->
+    <div class="w-100 h-100 overflow-auto">
+      <div class="card w-100">
+        <div class="card-header ">Product list</div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+            <tr>
+              <td>Id</td>
+              <td>Ref Article</td>
+              <td>nom Article</td>
+              <td>Categorie</td>
+              <td>Quantite</td>
+            </tr>
+            </thead>
+            <tbody *ngIf="articles">
+            <tr [ngClass]="{'notActiveColor':ArticleValide(article)==true}"
+                *ngFor="let article of articles | paginate: { itemsPerPage: 8, currentPage: page }">
+              <td>{{article.id}}</td>
+              <td>{{article.refArticle}}</td>
+              <td>{{article.name}}</td>
+              <td>{{article.categorie.name}}</td>
+              <td>{{article.quantiteTotal}}</td>
+
+              <td>
+                <button class="btn btn-warning"
+                        *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'"
+                        (click)="EditArticle(article)">
+                  <i class="fa fa-edit"></i>
+                </button>
+                <button class="btn btn-danger"
+                        *ngIf="authService.user.role.service.name+' '+authService.user.role.niveau.name == 'Service Achat niveau 2'"
+                        (click)="confirmationDeleteArticle(article)">
+                  <i class="fa fa-trash-o"></i>
+                </button>
+                <button class="btn btn-success"
+                        (click)="ArticleDetails(article)">
+                  <i class="fa fa-arrow-circle-right"></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <div class="has-text-centered">
+            <pagination-controls (pageChange)="page = $event"></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--delete Article confirmation model-->
+  <div class="modal  fade" id="ModeleDeleteArticle" data-keyboard="false" data-backdrop="static" tabindex="-1"
+       role="dialog">
+    <div class="modal-dialog modal-lg">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title text-left">Delete Article {{article.name}}</h4>
+          <button type="button" class="close" (click)="closeModelEdit()" data-dismiss="modal">&times;</button>
+
+        </div>
+        <div class="modal-body">
+          <h6> vous avez sûre supprimer Article id : {{article.id}}</h6>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" (click)="deleteArticle()">Delete</button>
+          <button type="button" class="btn btn-primary" (click)="closeModelEdit()" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!--Edit Article confirmation modal-->
+  <div class="modal  fade" id="ModeleEditArticle" data-keyboard="false" data-backdrop="static" tabindex="-1"
+       role="dialog">
+    <div class="modal-dialog modal-lg">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title text-left">Edit Article id {{article.id}}</h4>
+          <button type="button" class="close" (click)="closeModelEdit()" data-dismiss="modal">&times;</button>
+
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="categorie-select">Select Categorie</label>
+                <select class="form-control" id="categorie-select-Edit" [(ngModel)]="article.categorie">
+                  <option *ngFor="let cat of categories" [ngValue]="cat">
+                    {{cat.name}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group selected">
+                <label for="refArticle">Ref Article</label>
+                <input type="text" class="form-control" [(ngModel)]="article.refArticle" name="refArticle"
+                       id="refArticleEdit" placeholder="Ref Article">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="nomArticle">nom Article</label>
+                <input type="text" class="form-control" [(ngModel)]="article.name" id="nomArticleEdit"
+                       placeholder="nom Article">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="quantite">Quantite total</label>
+                <input type="number" class="form-control" [(ngModel)]="article.quantiteTotal" name="quantiteTotal"
+                       id="quantiteEdt"
+                       placeholder="0">
+              </div>
+            </div>
+          </div>
+          <input type="submit" value="update" (click)="updateArtcle()" class="btn btn-primary">
+          <button type="button" class="btn btn-danger" (click)="closeModelEdit()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

@@ -1,0 +1,139 @@
+<div *ngIf="showLoadingIndicator" class="loading">Loadinghhhhh</div>
+
+<div class="container">
+
+  <div class="card mt-4 shadow-lg animate__animated animate__zoomIn ">
+    <div class="card-body">
+      <div class="row justify-content-center">
+        <a href="{{authService.host+user.imageUser}}" data-lightbox="image-1">
+          <img *ngIf="user.imageUser" src="{{authService.host+user.imageUser}}"
+               class="rounded-circle card-img img-thumbnail" style="width: 200px;height: 200px">
+        </a>
+      </div>
+      <div class="row mt-2 justify-content-center">
+        <h2 class="card-title font-weight-bolder text-lg-center ">{{user.fullName}}</h2>
+      </div>
+      <div class="row mt-5">
+        <div class="col-lg-6 border-right ">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <h5 class="text-lg-right font-weight-bolder"> CIN : </h5>
+            </div>
+            <div class="col-md-6">
+              <h5 class="text-lg-left font-weight-normal"> {{user.cin}}</h5>
+            </div>
+          </div>
+
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <h5 class="text-lg-right font-weight-bolder"> Email : </h5>
+            </div>
+            <div class="col-md-6">
+              <h5 class="text-lg-left font-weight-normal"> {{user.email}}</h5>
+            </div>
+          </div>
+
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <h5 class="text-lg-right font-weight-bolder"> Tél : </h5>
+            </div>
+            <div class="col-md-6">
+              <h5 class="text-lg-left font-weight-normal"> {{user.tel}} </h5>
+            </div>
+          </div>
+
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <h5 class="text-lg-right font-weight-bolder"> Niveau Scolaire : </h5>
+            </div>
+            <div class="col-md-6">
+              <h5 class="text-lg-left font-weight-normal"> {{user.niveauScolaire}}</h5>
+            </div>
+          </div>
+
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <h5 class="text-lg-right font-weight-bolder"> Service : </h5>
+            </div>
+            <div class="col-md-6">
+              <h5 class="text-lg-left font-weight-normal" *ngIf="user.role"> {{user.role.service.name}} </h5>
+            </div>
+          </div>
+
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <h5 class="text-lg-right font-weight-bolder"> Niveau : </h5>
+            </div>
+            <div class="col-md-6">
+              <h5 class="text-lg-left font-weight-normal" *ngIf="user.role">  {{user.role.niveau.name}} </h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 border-left">
+          <div class="row">
+            <h5 class="pl-4 font-weight-bold"> Carte National </h5>
+          </div>
+          <div class="row justify-content-center">
+            <div *ngFor="let img of user.imageCin">
+              <a href="{{authService.host+img}}" data-lightbox="image-1">
+                <img src="{{authService.host+img}}" class="card-img img-thumbnail" style="width: 120px">
+              </a>
+            </div>
+          </div>
+          <div class="row">
+            <h5 class="pl-4 font-weight-bold"> Diplomes </h5>
+          </div>
+          <div class="row justify-content-center">
+            <div *ngFor="let img of user.imageDiplomes">
+              <div>
+                <a href="{{authService.host+img}}" data-lightbox="image-1">
+                  <img src="{{authService.host+img}}" class="card-img img-thumbnail" style="width: 120px">
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row  mt-3">
+        <div class="col-md-4 mt-5">
+          <div class="border-top"></div>
+        </div>
+        <div class="col-md-4 mt-4 text-center">
+          <h5 class="font-weight-bolder">Changer votre mot de passe</h5>
+        </div>
+        <div class="col-md-4 mt-5">
+          <div class="border-top  "></div>
+        </div>
+      </div>
+      <div class="alert alert-success" *ngIf="error.changePwdSuccess">
+        <p class="text-center font-weight-bold">{{error.changePwdSuccess}}</p>
+      </div>
+      <div class="row mt-2 justify-content-center">
+        <div class="col-md-5">
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="text" id="password" placeholder="Password" [ngClass]="{'shadow-none border-danger' : error.password}" [(ngModel)]="password" class="form-control">
+            <div class="alert alert-danger pt-0 pb-0" *ngIf="error.password">
+              <p class="text-danger mb-0">{{error.password}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="text" id="confirmPassword" [ngClass]="{'shadow-none border-danger' : error.confirmpwd}" [(ngModel)]="confirmPassword" placeholder="Confirm Password" class="form-control">
+            <div class="alert alert-danger pt-0 pb-0" *ngIf="error.confirmpwd">
+              <p class="text-danger mb-0">{{error.confirmpwd}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2 mt-4">
+          <div class="form-group text-center">
+            <input type="button" class="btn btn-primary " (click)="onChangePassword()" value="Register"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
